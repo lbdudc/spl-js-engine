@@ -65,4 +65,12 @@ export default class constraintSet {
   fromXml(xml) {
     xml.eachChild((c) => this.addConstraint(Constraint.fromXml(c.firstChild)));
   }
+
+  /////////////////////////////
+  // Parsing and Loading UVL //
+  /////////////////////////////
+
+  fromUVL(uvl) {
+    this.addConstraint(Constraint.fromXml(uvl));
+  }
 }

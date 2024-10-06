@@ -117,14 +117,25 @@ function cliLocal(
     mt = readFile(modelTransformation);
   }
 
-  return new DerivationEngine(
-    code,
-    readFile(featureModel),
-    configJson,
-    extra ? readFile(extra) : null,
-    mt,
-    verbose
-  );
+  if (featureModel.endsWith("uvl")) {
+    return new DerivationEngine(
+      code,
+      featureModel,
+      configJson,
+      extra ? readFile(extra) : null,
+      mt,
+      verbose
+    );
+  } else {
+    return new DerivationEngine(
+      code,
+      readFile(featureModel),
+      configJson,
+      extra ? readFile(extra) : null,
+      mt,
+      verbose
+    );
+  }
 }
 
 function validate(engine, productJson) {

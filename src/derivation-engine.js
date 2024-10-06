@@ -3,8 +3,14 @@ import TemplateEngine from "./template-engine/template-engine.js";
 import AnalysisReport from "./template-engine/analysis-report.js";
 import { LocalOutput, ZipOutput } from "./output.js";
 import { LocalInput, ZipInput } from "./input.js";
-import { getExtension, getFolder, getFileName } from "./file-utils.js";
+import {
+  getExtension,
+  getFolder,
+  getFileName,
+  readJsonFromFile,
+} from "./file-utils.js";
 import _eval from "eval";
+import UVLFeatureModel from "./feature-model/feature-model-uvl.js";
 
 export default class DerivationEngine {
   constructor(
@@ -13,7 +19,8 @@ export default class DerivationEngine {
     config,
     extraJS,
     modelTransformation,
-    verbose
+    verbose,
+    components = []
   ) {
     const promises = [];
 
@@ -75,6 +82,7 @@ export default class DerivationEngine {
           extraJS,
           modelTransformation,
           verbose,
+          components,
         } = codePath);
       }
       this.input = new LocalInput(codePath);
@@ -84,12 +92,12 @@ export default class DerivationEngine {
       .then(() => {
         this.templateEngine = new TemplateEngine({}, extraJS);
 
-        if (featureModel) {
-          this.setFeatureModel(featureModel);
-        }
-
         if (config) {
           this.setConfig(config);
+        }
+
+        if (featureModel) {
+          this.setFeatureModel(featureModel, components);
         }
 
         if (modelTransformation) {
@@ -129,6 +137,7 @@ export default class DerivationEngine {
       product = this.modelTransformation(product);
     }
     const features = this._prepareFeatures(product.features);
+
     const data = product.data || {};
     const fileGenerator = this.templateEngine.createFileGenerator(
       features,
@@ -141,6 +150,46 @@ export default class DerivationEngine {
     } else {
       this.output = new LocalOutput(opts.outputPath);
     }
+
+    //Proceso codeInsertionPoint (cip)
+    const tmpPath = "tmp/";
+    const idCipMain = ".cipmain";
+    const idCip = ".cip";
+    const delimiterCip = "cip";
+
+    this.input.copyTemplateCip(tmpPath, [idCipMain, idCip]);
+    this.inputCip = new LocalInput(tmpPath);
+    this.outputTmp = new LocalOutput(tmpPath);
+
+    this.inputCip.forEachCodeFile((fPath, fContent) => {
+      const fileName = getFileName(fPath);
+      if (!fileName.includes(idCipMain)) return;
+      let folder = getFolder(fPath.substring(fPath.indexOf("code"))) + "\\";
+      let nameWithoutExt = fileName.substring(0, fileName.indexOf(idCipMain));
+      let nameCip = nameWithoutExt + idCip + "." + getExtension(fPath);
+      let contentCip = this.inputCip.findFile(folder + nameCip);
+      const generatedContent = processor.process_cpi(
+        fContent,
+        delimiterCip,
+        {},
+        contentCip
+      );
+      const generatedFilePath = (
+        folder +
+        nameWithoutExt +
+        "." +
+        getExtension(fPath)
+      ).replace("./", "");
+
+      if (
+        generatedContent &&
+        (typeof generatedContent != "string" || generatedContent.trim())
+      ) {
+        this.outputTmp.add(generatedFilePath, generatedContent);
+      }
+    });
+    this.input.addCodePath(tmpPath + "code");
+    //Fin Proceso codeInsertionPoint (cip)
 
     return this.input
       .forEachCodeFile((fPath, fContent, isText) => {
@@ -168,28 +217,28 @@ export default class DerivationEngine {
                 "Output file: " + getFolder(fPath) + "/" + r.fileName
               );
             }
-            try {
-              const generatedContent = processor.process(
-                r.fileContent,
-                getExtension(fPath),
-                r.context
-              );
-              const generatedFilePath = (
-                getFolder(fPath) +
-                "/" +
-                r.fileName
-              ).replace("./", "");
-              if (
-                generatedContent &&
-                (typeof generatedContent != "string" || generatedContent.trim())
-              ) {
+            if (fPath.includes(idCipMain) || fPath.includes(idCip)) return;
+            let valida = this.output.fileExists(fPath);
+
+            const generatedContent = processor.process(
+              r.fileContent,
+              getExtension(fPath),
+              r.context
+            );
+            const generatedFilePath = (
+              getFolder(fPath) +
+              "/" +
+              r.fileName
+            ).replace("./", "");
+            if (
+              generatedContent &&
+              (typeof generatedContent != "string" || generatedContent.trim())
+            ) {
+              if (valida) {
+                return this.output.append(generatedFilePath, generatedContent);
+              } else {
                 return this.output.add(generatedFilePath, generatedContent);
               }
-            } catch (e) {
-              console.error(
-                `Error proccesing file ${fPath}. Stopping generation.`
-              );
-              throw e;
             }
           });
       })
@@ -209,7 +258,7 @@ export default class DerivationEngine {
     this.modelTransformation = _eval(mt, "transformation.js");
   }
 
-  setFeatureModel(featureModel) {
+  setFeatureModel(featureModel, components = []) {
     if (!featureModel) throw "feature model must be provided";
 
     if (typeof featureModel == "object") {
@@ -218,10 +267,16 @@ export default class DerivationEngine {
       try {
         this.featureModel = FeatureModel.fromJson(JSON.parse(featureModel));
       } catch (e) {
-        this.featureModel = FeatureModel.fromXml(featureModel);
+        if (featureModel.endsWith("uvl")) {
+          this.featureModel = FeatureModel.fromUVL(featureModel, components);
+          if (components.length > 0) {
+            this.setComponents(featureModel, components);
+          }
+        } else {
+          this.featureModel = FeatureModel.fromXml(featureModel);
+        }
       }
     }
-
     this.featureModel.validateFeatureModel();
   }
 
@@ -230,11 +285,14 @@ export default class DerivationEngine {
       config.delimiters.forEach((d) => {
         d.extension.forEach((e) => {
           this.input.addHandledExtension(e);
-          this.templateEngine.addDelimiter(e, d.start, d.end);
+          if (d.delimiter) {
+            this.templateEngine.addDelimiters(e, d.delimiter);
+          } else {
+            this.templateEngine.addDelimiter(e, d.start, d.end);
+          }
         });
       });
     }
-
     if (Array.isArray(config.ignore)) {
       this.input.setIgnorePattern(config.ignore);
     }
@@ -253,5 +311,22 @@ export default class DerivationEngine {
         );
       })
       .then(() => report);
+  }
+
+  setComponents(featureModel, components) {
+    let names = UVLFeatureModel.getUVLImports(featureModel);
+    names.forEach((name) => {
+      const component = components.find((c) => c.name === name);
+      let config = readJsonFromFile(component.config);
+      if (Array.isArray(config.delimiters)) {
+        config.delimiters.forEach((d) => {
+          d.extension.forEach((e) => {
+            this.input.addHandledExtension(e);
+            this.templateEngine.appendDelimiter(e, d.start, d.end);
+          });
+        });
+      }
+      this.input.addCodePath(component.codePath, component.main);
+    });
   }
 }

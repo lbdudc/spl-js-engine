@@ -28,6 +28,38 @@ export default class TemplateEngine {
     this.delimiters[type] = new Delimiter(start, end);
   }
 
+  addDelimiters(type, delimiters) {
+    this.delimiters[type] = [];
+    delimiters.forEach((del) => {
+      this.delimiters[type].push(new Delimiter(del.start, del.end));
+    });
+  }
+
+  appendDelimiter(type, start, end) {
+    if (this.delimiters[type]) {
+      if (Array.isArray(this.delimiters[type])) {
+        this.delimiters[type].forEach((del) => {
+          if (del.start == start && del.end == end) {
+            return;
+          }
+        });
+        this.delimiters[type].push(new Delimiter(start, end));
+      } else {
+        let oldStart = this.delimiters[type].start;
+        let oldEnd = this.delimiters[type].end;
+        if (oldStart == start && oldEnd == end) {
+          return;
+        } else {
+          this.delimiters[type] = [];
+          this.delimiters[type].push(new Delimiter(oldStart, oldEnd));
+          this.delimiters[type].push(new Delimiter(start, end));
+        }
+      }
+    } else {
+      this.delimiters[type] = new Delimiter(start, end);
+    }
+  }
+
   delimiterFor(extension) {
     return this.delimiters[extension];
   }

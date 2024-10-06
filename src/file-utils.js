@@ -32,6 +32,28 @@ export function writeFile(filePath, data, bin = false) {
   fs.writeFileSync(filePath, data, bin ? null : "utf8");
 }
 
+export function appendFile(filePath, data, bin = false) {
+  if (!bin && (!data || !data.trim())) return;
+  mkDirRecursively(path.dirname(filePath));
+  fs.appendFileSync(filePath, data, bin ? null : "utf8");
+}
+
+export function copyFile(filePathOrigen, tmpCipPath) {
+  let destinationDir = "";
+  let index = 0;
+
+  index = filePathOrigen.indexOf("/", index + 1);
+  destinationDir = tmpCipPath + getFolder(filePathOrigen.substring(index + 1));
+
+  if (!fs.existsSync(destinationDir)) {
+    fs.mkdirSync(destinationDir, { recursive: true });
+  }
+  fs.copyFileSync(
+    filePathOrigen,
+    destinationDir + "/" + getFileName(filePathOrigen)
+  );
+}
+
 function mkDirRecursively(folderPath) {
   const parentPath = path.dirname(folderPath);
 

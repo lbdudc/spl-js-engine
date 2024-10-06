@@ -8,7 +8,14 @@ export default class FileGenerator extends Engine {
   }
 
   filesToCreate(fileContent, extension, fileName, basePath, context) {
-    const delimiter = this.getDelimiter(extension).header;
+    const delimiterExt = this.getDelimiter(extension);
+    let delimiter = "";
+    if (Array.isArray(delimiterExt)) {
+      delimiter = delimiterExt[0].header;
+    } else {
+      delimiter = delimiterExt.header;
+    }
+
     const match = delimiter.exec(fileContent);
 
     if (!match) {

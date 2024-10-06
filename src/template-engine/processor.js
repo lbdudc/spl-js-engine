@@ -11,20 +11,44 @@ export default class Processor extends Engine {
     let code = this.getTemplateHelperMethods() + "var lines = [];\n";
     let cursor = 0;
     let match;
-    const delimiter = this.getDelimiter(ext).regular;
+    const delimiterExt = this.getDelimiter(ext);
 
-    while ((match = delimiter.exec(str)) !== null) {
-      code += _newLine(str.slice(cursor, match.index));
-      if (match[1] === "\n") {
-        // javascriptExpression is 'full-line' and starts at
-        // beginning of line, we should add the newline taken by regexp
-        code += 'lines.push("\\n");\n';
+    if (Array.isArray(delimiterExt)) {
+      let arrayMatchs = [];
+      delimiterExt.forEach((del) => {
+        while ((match = del.regular.exec(str)) !== null) {
+          arrayMatchs.push(match);
+        }
+      });
+      arrayMatchs.sort(function (a, b) {
+        return a.index - b.index;
+      });
+      arrayMatchs.forEach((match) => {
+        code += _newLine(str.slice(cursor, match.index));
+        if (match[1] === "\n") {
+          // javascriptExpression is 'full-line' and starts at
+          // beginning of line, we should add the newline taken by regexp
+          code += 'lines.push("\\n");\n';
+        }
+        code += _newLine(match.slice(1).join(""), true);
+        cursor = match.index + match[0].length;
+      });
+      code += _newLine(str.substr(cursor, str.length - cursor));
+    } else {
+      const delimiter = this.getDelimiter(ext).regular;
+
+      while ((match = delimiter.exec(str)) !== null) {
+        code += _newLine(str.slice(cursor, match.index));
+        if (match[1] === "\n") {
+          // javascriptExpression is 'full-line' and starts at
+          // beginning of line, we should add the newline taken by regexp
+          code += 'lines.push("\\n");\n';
+        }
+        code += _newLine(match.slice(1).join(""), true);
+        cursor = match.index + match[0].length;
       }
-      code += _newLine(match.slice(1).join(""), true);
-      cursor = match.index + match[0].length;
+      code += _newLine(str.substr(cursor, str.length - cursor));
     }
-    code += _newLine(str.substr(cursor, str.length - cursor));
-
     // eliminating superfluous spaces
     code = (code + 'return lines.join("");').replace(/[\r\t\n]/g, "");
 
@@ -34,7 +58,60 @@ export default class Processor extends Engine {
       context
     );
   }
+
+  process_cpi(str, ext, context, contentCipList) {
+    let code = "";
+    let cursor = 0;
+    let cursorCip = 0;
+    let lengthMatch = 0;
+    let match;
+    let match2;
+    const delimiter = this.getDelimiter(ext).regular;
+    const delimiterCip = this.getDelimiter(ext).regular;
+    const del = this.getDelimiter(ext);
+    let codeInsertion;
+
+    while ((match = delimiter.exec(str)) !== null) {
+      code += str.slice(cursor, match.index) + "\n";
+      codeInsertion = match[0]
+        .substring(
+          match[0].indexOf(del.start) + del.start.length,
+          match[0].indexOf(del.end)
+        )
+        .trim();
+      contentCipList.forEach((contentCip) => {
+        delimiterCip.lastIndex = 0;
+        let isFirstMatch = true;
+        while ((match2 = delimiterCip.exec(contentCip)) !== null) {
+          if (
+            match2[0]
+              .substring(
+                match2[0].indexOf(del.start) + del.start.length,
+                match2[0].indexOf(del.end)
+              )
+              .trim() == codeInsertion
+          ) {
+            if (isFirstMatch) {
+              isFirstMatch = false;
+              cursorCip = match2.index;
+              lengthMatch = match2[0].length;
+              continue;
+            }
+            code +=
+              contentCip.slice(cursorCip + lengthMatch, match2.index) + "\n";
+          } else {
+            isFirstMatch = true;
+          }
+        }
+      });
+      cursor = match.index + match[0].length;
+      delimiter.lastIndex = cursor;
+    }
+    code += str.substr(cursor, str.length);
+    return code;
+  }
 }
+
 // first we escape the \ symbols in the text. Then we focus on special cases
 // that need to be escaped.
 const _textLine = (line) =>

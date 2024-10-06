@@ -1,5 +1,5 @@
 import { isText } from "istextorbinary";
-import { readFile, walkDir, isNode } from "./file-utils.js";
+import { readFile, walkDir, isNode, copyFile } from "./file-utils.js";
 import { getExtension } from "./file-utils.js";
 import path from "path";
 
@@ -81,7 +81,7 @@ export class ZipInput extends Input {
 export class LocalInput extends Input {
   constructor(codePath) {
     super();
-    this.codePath = codePath;
+    this.codePath = [codePath];
     this.ignore = [];
   }
 
@@ -89,21 +89,62 @@ export class LocalInput extends Input {
     this.ignore = ignoreArray;
   }
 
-  forEachCodeFile(cb) {
-    walkDir(
-      this.codePath,
-      (fPath, isFolder) => {
-        if (isFolder) return;
-        const isText = this.fileIsText(fPath);
+  addCodePath(newCodePath, main = false) {
+    main ? this.codePath.unshift(newCodePath) : this.codePath.push(newCodePath);
+  }
 
-        return cb(
-          fPath.replace(this.codePath + path.sep, ""),
-          readFile(fPath, !isText),
-          isText
-        );
-      },
-      this.ignore
-    );
+  findFile(nameCip) {
+    let self = this;
+    let contentCip = [];
+    this.codePath.forEach(function (codePath) {
+      walkDir(
+        codePath,
+        (fPath, isFolder) => {
+          if (isFolder) return;
+          if (fPath.endsWith(nameCip)) {
+            const isText = self.fileIsText(fPath);
+            contentCip.push(readFile(fPath, !isText));
+          }
+        },
+        self.ignore
+      );
+    });
+    return contentCip;
+  }
+
+  copyTemplateCip(tmpCipPath, listCips) {
+    let self = this;
+    this.codePath.forEach(function (codePath) {
+      walkDir(
+        codePath,
+        (fPath, isFolder) => {
+          if (isFolder) return;
+          if (listCips.some((cip) => fPath.includes(cip))) {
+            copyFile(fPath, tmpCipPath);
+          }
+        },
+        self.ignore
+      );
+    });
+  }
+
+  forEachCodeFile(cb) {
+    let self = this;
+    this.codePath.forEach(function (codePath) {
+      walkDir(
+        codePath,
+        (fPath, isFolder) => {
+          if (isFolder) return;
+          const isText = self.fileIsText(fPath);
+          return cb(
+            fPath.replace(codePath + path.sep, ""),
+            readFile(fPath, !isText),
+            isText
+          );
+        },
+        self.ignore
+      );
+    });
     return Promise.all([]);
   }
 }

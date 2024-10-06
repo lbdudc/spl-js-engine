@@ -10,7 +10,9 @@
     "meow": "^12.0.1",
     "strip-bom": "^5.0.0",
     "xml-writer": "^1.7.0",
-    "xmldoc": "^0.5.1"
+    "xmldoc": "^0.5.1",
+    "antlr4": "^4.13.1",
+    "uvl-parser": "^0.0.3"
   },
   "description": "Software Product Line JavaScript Derivation Engine",
   "devDependencies": {

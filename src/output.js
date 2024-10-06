@@ -1,4 +1,4 @@
-import { writeFile } from "./file-utils.js";
+import { writeFile, existsFile, appendFile } from "./file-utils.js";
 import JSZip from "jszip";
 import path from "path";
 
@@ -37,5 +37,22 @@ export class LocalOutput extends Output {
 
   get() {
     return this.outputPath;
+  }
+
+  append(fPath, fContent, bin = false) {
+    appendFile(this.outputPath + path.sep + fPath, fContent, bin);
+  }
+
+  fileExists(fileName) {
+    const stats = existsFile(this.outputPath + "/" + fileName);
+    try {
+      if (stats.isFile()) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
   }
 }
