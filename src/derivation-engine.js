@@ -168,21 +168,28 @@ export default class DerivationEngine {
                 "Output file: " + getFolder(fPath) + "/" + r.fileName
               );
             }
-            const generatedContent = processor.process(
-              r.fileContent,
-              getExtension(fPath),
-              r.context
-            );
-            const generatedFilePath = (
-              getFolder(fPath) +
-              "/" +
-              r.fileName
-            ).replace("./", "");
-            if (
-              generatedContent &&
-              (typeof generatedContent != "string" || generatedContent.trim())
-            ) {
-              return this.output.add(generatedFilePath, generatedContent);
+            try {
+              const generatedContent = processor.process(
+                r.fileContent,
+                getExtension(fPath),
+                r.context
+              );
+              const generatedFilePath = (
+                getFolder(fPath) +
+                "/" +
+                r.fileName
+              ).replace("./", "");
+              if (
+                generatedContent &&
+                (typeof generatedContent != "string" || generatedContent.trim())
+              ) {
+                return this.output.add(generatedFilePath, generatedContent);
+              }
+            } catch (e) {
+              console.error(
+                `Error proccesing file ${fPath}. Stopping generation.`
+              );
+              throw e;
             }
           });
       })
