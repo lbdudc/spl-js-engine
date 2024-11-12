@@ -32,31 +32,26 @@ beforeEach(removeTmpFolder);
 afterEach(removeTmpFolder);
 
 test("Create a product with two components", async () => {
-  const components = [
+  
+const components = [
     {
       name: "componentA",
-      nameProject: "componentA",
+      codePath: p("simpleSPLwithComponents/componentA/code"),
+      featureModel: p("simpleSPLwithComponents/componentA/model.uvl"),
+      config: p("simpleSPLwithComponents/componentA/config.json"),
+      path: p("simpleSPLwithComponents/componentA"),
       main: true,
     },
     {
       name: "componentB",
-      nameProject: "componentB",
-    },
-  ].map((component) => {
-    return {
-      name: component.name,
-      codePath: p("simpleSPLwithComponents/" + component.name + "/code"),
-      featureModel: p(
-        "simpleSPLwithComponents/" + component.name + "/model.uvl"
-      ),
-      config: p("simpleSPLwithComponents/" + component.name + "/config.json"),
-      path: p("simpleSPLwithComponents/" + component.name),
-      main: component.main ? component.main : false,
-    };
-  });
+      codePath: p("simpleSPLwithComponents/componentB/code"),
+      featureModel: p("simpleSPLwithComponents/componentB/model.uvl"),
+      config: p("simpleSPLwithComponents/componentB/config.json"),
+      path: p("simpleSPLwithComponents/componentB"),
+    }
+  ];
 
-  const engine = await new DerivationEngine({
-    codePath: p("simpleSPLwithComponents/code"),
+  const engine = await new DerivationEngine({    
     featureModel: p("simpleSPLwithComponents/model.uvl"),
     components: components,
   });
@@ -76,35 +71,34 @@ beforeEach(removeTmpFolder);
 afterEach(removeTmpFolder);
 
 test("Create a product with three components", async () => {
-  const components = [
+
+
+const components = [
     {
       name: "componentA",
-      nameProject: "componentA",
+      codePath: p("simpleSPLwithComponents2/componentA/code"),
+      featureModel: p("simpleSPLwithComponents2/componentA/model.uvl"),
+      config: p("simpleSPLwithComponents2/componentA/config.json"),
+      path: p("simpleSPLwithComponents2/componentA"),
       main: true,
     },
     {
       name: "componentB",
-      nameProject: "componentB",
+      codePath: p("simpleSPLwithComponents2/componentB/code"),
+      featureModel: p("simpleSPLwithComponents2/componentB/model.uvl"),
+      config: p("simpleSPLwithComponents2/componentB/config.json"),
+      path: p("simpleSPLwithComponents2/componentB"),
     },
     {
       name: "componentC",
-      nameProject: "componentC",
-    },
-  ].map((component) => {
-    return {
-      name: component.name,
-      codePath: p("simpleSPLwithComponents2/" + component.name + "/code"),
-      featureModel: p(
-        "simpleSPLwithComponents2/" + component.name + "/model.uvl"
-      ),
-      config: p("simpleSPLwithComponents2/" + component.name + "/config.json"),
-      path: p("simpleSPLwithComponents2/" + component.name),
-      main: component.main ? component.main : false,
-    };
-  });
+      codePath: p("simpleSPLwithComponents2/componentC/code"),
+      featureModel: p("simpleSPLwithComponents2/componentC/model.uvl"),
+      config: p("simpleSPLwithComponents2/componentC/config.json"),
+      path: p("simpleSPLwithComponents2/componentC"),
+    }
+  ];
 
   const engine = await new DerivationEngine({
-    codePath: p("simpleSPLwithComponents2/code"),
     featureModel: p("simpleSPLwithComponents2/model.uvl"),
     components: components,
   });
@@ -124,35 +118,26 @@ beforeEach(removeTmpFolder);
 afterEach(removeTmpFolder);
 
 test("Create a product with components and different delimiters", async () => {
-  const components = [
+
+const components = [
     {
       name: "componentA",
-      nameProject: "componentA",
+      codePath: p("simpleSPLwithComponents/componentA/code"),
+      featureModel: p("simpleSPLwithComponents/componentA/model.uvl"),
+      config: p("simpleSPLwithComponents/componentA/config.json"),
+      path: p("simpleSPLwithComponents/componentA"),
       main: true,
     },
     {
       name: "componentB",
-      nameProject: "componentB",
-    },
-  ].map((component) => {
-    return {
-      name: component.name,
-      codePath: p(
-        "simpleSPLwithComponentsDelimiter/" + component.name + "/code"
-      ),
-      featureModel: p(
-        "simpleSPLwithComponentsDelimiter/" + component.name + "/model.uvl"
-      ),
-      config: p(
-        "simpleSPLwithComponentsDelimiter/" + component.name + "/config.json"
-      ),
-      path: p("simpleSPLwithComponentsDelimiter/" + component.name),
-      main: component.main ? component.main : false,
-    };
-  });
+      codePath: p("simpleSPLwithComponents/componentB/code"),
+      featureModel: p("simpleSPLwithComponents/componentB/model.uvl"),
+      config: p("simpleSPLwithComponents/componentB/config.json"),
+      path: p("simpleSPLwithComponents/componentB"),
+    }
+  ];
 
   const engine = await new DerivationEngine({
-    codePath: p("simpleSPLwithComponentsDelimiter/code"),
     featureModel: p("simpleSPLwithComponentsDelimiter/model.uvl"),
     components: components,
   });
