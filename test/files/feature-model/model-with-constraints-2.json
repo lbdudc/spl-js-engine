@@ -37,9 +37,6 @@
             "first": "Add",
             "second": "Multiply"
         }, {
-            "type": "not",
-            "constraint": "Add"
-        }, {
             "type": "or",
             "first": {
                 "type": "not",

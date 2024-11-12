@@ -1,66 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <featureModel>
-    <struct>
-        <and name="MyCalculator" mandatory="true" abstract="true">
-            <and name="Base" mandatory="true">
-                <or name="Operations" abstract="true">
-                    <feature name="Add"/>
-                    <feature name="Subtract"/>
-                    <feature name="Multiply"/>
-                    <feature name="Divide"/>
-                </or>
-                <or name="Capabilities" abstract="true">
-                    <feature name="Decimal"/>
-                </or>
-            </and>
-        </and>
-    </struct>
-    <constraints>
-        <rule>
-            <disj>
-                <var>Add</var>
-                <var>Multiply</var>
-            </disj>
-        </rule>
-        <rule>
-            <not>
-                <var>Add</var>
-            </not>
-        </rule>
-        <rule>
-            <disj>
-                <not>
-                    <var>Add</var>
-                </not>
-                <var>Capabilities</var>
-            </disj>
-        </rule>
-        <rule>
-            <conj>
-                <var>Capabilities</var>
-                <var>Add</var>
-            </conj>
-        </rule>
-        <rule>
-            <imp>
-                <var>Multiply</var>
-                <var>Base</var>
-            </imp>
-        </rule>
-        <rule>
-            <eq>
-                <var>Capabilities</var>
-                <var>Decimal</var>
-            </eq>
-        </rule>
-        <rule>
-            <imp>
-                <imp>
-                    <var>Decimal</var>
-                    <var>Base</var>
-                </imp>
-                <var>Divide</var>
-            </imp>
-        </rule>
-    </constraints>
+	<struct>
+		<and name="MyCalculator" mandatory="true" abstract="true">
+			<and name="Base" mandatory="true">
+				<or name="Operations" abstract="true">
+					<feature name="Add"/>
+					<feature name="Subtract"/>
+					<feature name="Multiply"/>
+					<feature name="Divide"/>
+				</or>
+				<or name="Capabilities" abstract="true">
+					<feature name="Decimal"/>
+				</or>
+			</and>
+		</and>
+	</struct>
+	<constraints>
+		<rule>
+			<disj>
+				<var>Add</var>
+				<var>Multiply</var>
+			</disj>
+		</rule>
+		<rule>
+			<disj>
+				<not>
+					<var>Add</var>
+				</not>
+				<var>Capabilities</var>
+			</disj>
+		</rule>
+		<rule>
+			<conj>
+				<var>Capabilities</var>
+				<var>Add</var>
+			</conj>
+		</rule>
+		<rule>
+			<imp>
+				<var>Multiply</var>
+				<var>Base</var>
+			</imp>
+		</rule>
+		<rule>
+			<eq>
+				<var>Capabilities</var>
+				<var>Decimal</var>
+			</eq>
+		</rule>
+		<rule>
+			<imp>
+				<imp>
+					<var>Decimal</var>
+					<var>Base</var>
+				</imp>
+				<var>Divide</var>
+			</imp>
+		</rule>
+	</constraints>
 </featureModel>
