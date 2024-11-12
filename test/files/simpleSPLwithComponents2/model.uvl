@@ -1,0 +1,10 @@
+imports
+    componentA
+    componentB
+    componentC
+features
+    SimpleSPL
+        optional
+            componentA.SPLcomponentA
+            componentB.SPLcomponentB
+            componentC.SPLcomponentC

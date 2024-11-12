@@ -287,9 +287,10 @@ test("Create a product with includes", async () => {
 test("Check if @includes with absolute path works", async () => {
   const originalFile = readFile(p("simpleSPLwithIncludes/product.json"));
   const fullPath = `${process.cwd()}/${p("simpleSPLwithIncludes/includes")}`;
+  let updatedPath = fullPath.replace(/\\/g, "/");
   const newFileContent = originalFile.replaceAll(
     "@include:includes",
-    `@include:${fullPath}`
+    `@include:${updatedPath}`
   );
 
   fs.mkdirSync(p("tmp"));

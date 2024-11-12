@@ -157,38 +157,40 @@ export default class DerivationEngine {
     const idCip = ".cip";
     const delimiterCip = "cip";
 
-    this.input.copyTemplateCip(tmpPath, [idCipMain, idCip]);
-    this.inputCip = new LocalInput(tmpPath);
-    this.outputTmp = new LocalOutput(tmpPath);
+    if (this.components) {
+      this.input.copyTemplateCip(tmpPath, [idCipMain, idCip]);
+      this.inputCip = new LocalInput(tmpPath);
+      this.outputTmp = new LocalOutput(tmpPath);
 
-    this.inputCip.forEachCodeFile((fPath, fContent) => {
-      const fileName = getFileName(fPath);
-      if (!fileName.includes(idCipMain)) return;
-      let folder = getFolder(fPath.substring(fPath.indexOf("code"))) + "\\";
-      let nameWithoutExt = fileName.substring(0, fileName.indexOf(idCipMain));
-      let nameCip = nameWithoutExt + idCip + "." + getExtension(fPath);
-      let contentCip = this.inputCip.findFile(folder + nameCip);
-      const generatedContent = processor.process_cpi(
-        fContent,
-        delimiterCip,
-        {},
-        contentCip
-      );
-      const generatedFilePath = (
-        folder +
-        nameWithoutExt +
-        "." +
-        getExtension(fPath)
-      ).replace("./", "");
+      this.inputCip.forEachCodeFile((fPath, fContent) => {
+        const fileName = getFileName(fPath);
+        if (!fileName.includes(idCipMain)) return;
+        let folder = getFolder(fPath.substring(fPath.indexOf("code"))) + "\\";
+        let nameWithoutExt = fileName.substring(0, fileName.indexOf(idCipMain));
+        let nameCip = nameWithoutExt + idCip + "." + getExtension(fPath);
+        let contentCip = this.inputCip.findFile(folder + nameCip);
+        const generatedContent = processor.process_cpi(
+          fContent,
+          delimiterCip,
+          {},
+          contentCip
+        );
+        const generatedFilePath = (
+          folder +
+          nameWithoutExt +
+          "." +
+          getExtension(fPath)
+        ).replace("./", "");
 
-      if (
-        generatedContent &&
-        (typeof generatedContent != "string" || generatedContent.trim())
-      ) {
-        this.outputTmp.add(generatedFilePath, generatedContent);
-      }
-    });
-    this.input.addCodePath(tmpPath + "code");
+        if (
+          generatedContent &&
+          (typeof generatedContent != "string" || generatedContent.trim())
+        ) {
+          this.outputTmp.add(generatedFilePath, generatedContent);
+        }
+      });
+      this.input.addCodePath(tmpPath + "code");
+    }
     //Fin Proceso codeInsertionPoint (cip)
 
     return this.input
@@ -217,8 +219,12 @@ export default class DerivationEngine {
                 "Output file: " + getFolder(fPath) + "/" + r.fileName
               );
             }
-            if (fPath.includes(idCipMain) || fPath.includes(idCip)) return;
-            let valida = this.output.fileExists(fPath);
+            if (this.components) {
+              if (fPath.includes(idCipMain) || fPath.includes(idCip)) return;
+            }
+            let valida = this.components
+              ? this.output.fileExists(fPath)
+              : false;
 
             const generatedContent = processor.process(
               r.fileContent,
@@ -270,6 +276,7 @@ export default class DerivationEngine {
         if (featureModel.endsWith("uvl")) {
           this.featureModel = FeatureModel.fromUVL(featureModel, components);
           if (components.length > 0) {
+            this.components = true;
             this.setComponents(featureModel, components);
           }
         } else {
@@ -277,6 +284,7 @@ export default class DerivationEngine {
         }
       }
     }
+
     this.featureModel.validateFeatureModel();
   }
 
@@ -293,6 +301,7 @@ export default class DerivationEngine {
         });
       });
     }
+
     if (Array.isArray(config.ignore)) {
       this.input.setIgnorePattern(config.ignore);
     }
