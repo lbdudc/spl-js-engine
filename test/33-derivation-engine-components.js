@@ -28,12 +28,8 @@ test("Create a product with UVL format", async () => {
   );
 });
 
-beforeEach(removeTmpFolder);
-afterEach(removeTmpFolder);
-
 test("Create a product with two components", async () => {
-  
-const components = [
+  const components = [
     {
       name: "componentA",
       codePath: p("simpleSPLwithComponents/componentA/code"),
@@ -48,10 +44,10 @@ const components = [
       featureModel: p("simpleSPLwithComponents/componentB/model.uvl"),
       config: p("simpleSPLwithComponents/componentB/config.json"),
       path: p("simpleSPLwithComponents/componentB"),
-    }
+    },
   ];
 
-  const engine = await new DerivationEngine({    
+  const engine = await new DerivationEngine({
     featureModel: p("simpleSPLwithComponents/model.uvl"),
     components: components,
   });
@@ -67,13 +63,8 @@ const components = [
   );
 });
 
-beforeEach(removeTmpFolder);
-afterEach(removeTmpFolder);
-
 test("Create a product with three components", async () => {
-
-
-const components = [
+  const components = [
     {
       name: "componentA",
       codePath: p("simpleSPLwithComponents2/componentA/code"),
@@ -95,7 +86,7 @@ const components = [
       featureModel: p("simpleSPLwithComponents2/componentC/model.uvl"),
       config: p("simpleSPLwithComponents2/componentC/config.json"),
       path: p("simpleSPLwithComponents2/componentC"),
-    }
+    },
   ];
 
   const engine = await new DerivationEngine({
@@ -114,12 +105,8 @@ const components = [
   );
 });
 
-beforeEach(removeTmpFolder);
-afterEach(removeTmpFolder);
-
 test("Create a product with components and different delimiters", async () => {
-
-const components = [
+  const components = [
     {
       name: "componentA",
       codePath: p("simpleSPLwithComponents/componentA/code"),
@@ -134,7 +121,7 @@ const components = [
       featureModel: p("simpleSPLwithComponents/componentB/model.uvl"),
       config: p("simpleSPLwithComponents/componentB/config.json"),
       path: p("simpleSPLwithComponents/componentB"),
-    }
+    },
   ];
 
   const engine = await new DerivationEngine({
