@@ -4,28 +4,31 @@
     "spl-js-engine": "./src/cli.js"
   },
   "dependencies": {
+    "antlr4": "^4.13.1",
     "eval": "^0.1.8",
     "istextorbinary": "^6.0.0",
     "jszip": "^3.10.1",
     "meow": "^12.0.1",
     "strip-bom": "^5.0.0",
+    "uvl-parser": "^0.0.3",
     "xml-writer": "^1.7.0",
-    "xmldoc": "^0.5.1",
-    "antlr4": "^4.13.1",
-    "uvl-parser": "^0.0.3"
+    "xmldoc": "^0.5.1"
   },
   "description": "Software Product Line JavaScript Derivation Engine",
   "devDependencies": {
     "eslint": "^8.40.0",
     "eslint-config-prettier": "^8.8.0",
-    "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
     "mocha": "^10.2.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.8",
-    "pretty-data": "^0.40.0"
+    "pretty-data": "^0.40.0",
+    "yorkie": "^2.0.0"
   },
   "homepage": "https://github.com/AlexCortinas/spl-js-engine",
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
   "license": "MIT",
   "lint-staged": {
     "*.{json,md,yml}": "prettier --write",
@@ -44,7 +47,6 @@
     "lint": "npm-run-all lint_eslint lint_prettier",
     "lint_eslint": "eslint --ext js,vue --fix src test",
     "lint_prettier": "prettier --write --ignore-unknown src test",
-    "prepare": "husky install",
     "test": "mocha --ui qunit"
   },
   "type": "module",
