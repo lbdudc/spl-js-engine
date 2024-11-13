@@ -165,10 +165,10 @@ export default class DerivationEngine {
       this.inputCip.forEachCodeFile((fPath, fContent) => {
         const fileName = getFileName(fPath);
         if (!fileName.includes(idCipMain)) return;
-        let folder = getFolder(fPath.substring(fPath.indexOf("code"))) + "\\";
-        let nameWithoutExt = fileName.substring(0, fileName.indexOf(idCipMain));
-        let nameCip = nameWithoutExt + idCip + "." + getExtension(fPath);
-        let contentCip = this.inputCip.findFile(folder + nameCip);
+        let file = fPath.substring(fPath.indexOf("code"));
+        let fileCip = file.replace("cipmain","cip");
+        let nameWithoutExt = file.replace("cipmain.","");
+        let contentCip = this.inputCip.findFile(fileCip);
         const generatedContent = processor.process_cpi(
           fContent,
           delimiterCip,
@@ -176,10 +176,7 @@ export default class DerivationEngine {
           contentCip
         );
         const generatedFilePath = (
-          folder +
-          nameWithoutExt +
-          "." +
-          getExtension(fPath)
+          nameWithoutExt
         ).replace("./", "");
 
         if (
