@@ -1,0 +1,11 @@
+imports
+  capabilities
+features
+    AdvancedOperations {abstract}
+      alternative
+        capabilities.Capabilities
+        divide
+        power
+        square_root
+constraints
+  divide => decimal

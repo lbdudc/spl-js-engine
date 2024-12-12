@@ -1,0 +1,12 @@
+{
+  "author": "Álex Cortiñas",
+  "description": "Annotated source of a absurd web calculator to generate with spl-js-engine tool",
+  "devDependencies": {
+    "bower": "^1.7.9"
+  },
+  "name": "/*%= data.title %*/",
+  "scripts": {
+    "postinstall": "bower install"
+  },
+  "version": "1.0.0"
+}

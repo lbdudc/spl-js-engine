@@ -8,8 +8,8 @@ export default class UVLFeatureModel {
     this.filePathUVL = filePathUVL;
   }
 
-  static getUVLImports(featureModel) {
-    const paths = [];
+  static getUVLImports(featureModel,components) {
+    let paths = [];
     const fm = new FeatureModel(featureModel);
     const tree = fm.getFeatureModel();
     const listImports = tree.imports();
@@ -18,8 +18,13 @@ export default class UVLFeatureModel {
         if (childImport instanceof UVLJavaScriptParser.ImportLineContext) {
           childImport.children.forEach((child) => {
             if (child instanceof UVLJavaScriptParser.ReferenceContext) {
-              const name = child.getText();
-              paths.push(name);
+              const nameImport = child.getText();
+              paths.push(nameImport);
+              const component = components.find(
+                (c) => c.name === nameImport
+              );
+              childImport = UVLFeatureModel.getUVLImports(component.featureModel,components);
+              paths = childImport.length > 0 ? paths.concat(childImport) : paths;
             }
           });
         }
@@ -142,6 +147,7 @@ export default class UVLFeatureModel {
                     _feature,
                     _listImports
                   );
+                  this.getUVLConstraints(tree_import, fm);
                 }
               }
             }
@@ -209,3 +215,4 @@ export default class UVLFeatureModel {
     }
   }
 }
+

@@ -320,7 +320,7 @@ export default class DerivationEngine {
   }
 
   setComponents(featureModel, components) {
-    let names = UVLFeatureModel.getUVLImports(featureModel);
+    let names = UVLFeatureModel.getUVLImports(featureModel,components);
     names.forEach((name) => {
       const component = components.find((c) => c.name === name);
       let config = readJsonFromFile(component.config);

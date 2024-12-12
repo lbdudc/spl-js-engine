@@ -1,0 +1,17 @@
+{
+  "features": [
+    "decimal",
+    "add",
+    "multiply",
+    "divide"
+  ],
+  "data": {
+    "title": "Web Calculator",
+    "description": "A simple web calculator",
+    "maven": {
+      "group": "es.udc.lbd",
+      "artifact": "web-calculator",
+      "version": 0.1
+    }
+  }
+}

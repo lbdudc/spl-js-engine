@@ -1,0 +1,4 @@
+features
+  WebCalculator
+    mandatory
+      web

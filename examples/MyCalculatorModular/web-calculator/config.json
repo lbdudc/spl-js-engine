@@ -1,0 +1,37 @@
+{
+    "ignore": [
+        "target",
+        "bower_components"
+    ],
+    "delimiters": [
+        {
+            "extension": [
+                "html",
+                "jsp",
+                "xml"
+            ],
+            "start": "<!--%",
+            "end": "%-->"
+        },
+        {
+            "extension": [
+                "js",
+                "java"
+            ],
+            "start": "/*%",
+            "end": "%*/"
+        },
+        {
+            "extension": [
+                "py"
+            ],
+            "start": "#%",
+            "end": "%#"
+        },
+        {
+          "extension": ["cip"],
+          "start": "/*→",
+          "end": "←*/"
+        }
+    ]
+}

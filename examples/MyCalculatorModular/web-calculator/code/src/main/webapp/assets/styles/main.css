@@ -1,0 +1,37 @@
+
+.calculator {
+    margin: auto;
+    border: 1px solid black;
+    display: table;
+}
+
+.calculator .row {
+    display: flex;
+}
+
+.calculator .display {
+    height: 50px;
+    width: 100%;
+    text-align: right;
+    font-size: 30px;
+}
+
+.calculator .numeric-keyboard {
+    display: table;
+}
+
+
+.calculator .row .button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid black;
+    cursor: pointer;
+    text-align: center;
+    font-size: 25px;
+    display: table-cell;
+    padding: 1px;
+}
+
+.calculator .functions-keyboard {
+    display: table;
+}
