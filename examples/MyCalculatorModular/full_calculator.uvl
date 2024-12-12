@@ -1,0 +1,12 @@
+imports
+  basic_operations
+  advanced_operations
+  capabilities
+  web_calculator
+features
+  MyCalculator {abstract}
+    mandatory
+      web_calculator.WebCalculator
+      basic_operations.BasicOperations
+      advanced_operations.AdvancedOperations
+      capabilities.Capabilities

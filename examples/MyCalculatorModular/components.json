@@ -1,0 +1,6 @@
+{
+    "web_calculator": "./components/web-calculator",
+    "advanced_operations": "./components/advanced-operations",
+    "basic_operations": "./components/basic-operations",
+    "capabilities": "./components/capabilities"
+}

@@ -1,0 +1,8 @@
+imports
+  basic_operations
+  web_calculator
+features
+  MyCalculator {abstract}
+    mandatory
+      web_calculator.WebCalculator
+      basic_operations.BasicOperations
