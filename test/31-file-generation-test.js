@@ -29,7 +29,6 @@ test("Destructuring parameters", async () => {
 });
 
 test("Generate local from zip", (done) => {
-  setTimeout(done, 300);
   JSZip.loadAsync(readFile(p("simpleSPL.zip"), true))
     .then((zip) => {
       new DerivationEngine({
@@ -54,7 +53,6 @@ test("Generate local from zip", (done) => {
 });
 
 test("Generate local from zip with a folder inside", (done) => {
-  setTimeout(done, 300);
   JSZip.loadAsync(readFile(p("simpleSPLwithFolder.zip"), true))
     .then((zip) => {
       return new DerivationEngine({
@@ -81,7 +79,6 @@ test("Generate local from zip with a folder inside", (done) => {
 });
 
 test("Generate zip from zip", (done) => {
-  setTimeout(done, 300);
   JSZip.loadAsync(readFile(p("simpleSPL.zip"), true))
     .then((zip) => {
       new DerivationEngine({ zip, featureModel: "model.json" }).then(
@@ -161,7 +158,6 @@ test("Generate zip from local", (done) => {
 });
 
 test("Generate local from zip extending JSON", (done) => {
-  setTimeout(done, 300);
   JSZip.loadAsync(readFile(p("simpleSPLwithIncludes.zip"), true))
     .then((zip) => {
       new DerivationEngine({
@@ -186,7 +182,6 @@ test("Generate local from zip extending JSON", (done) => {
 });
 
 test("Generate zip from zip extending JSON", (done) => {
-  setTimeout(done, 300);
   JSZip.loadAsync(readFile(p("simpleSPLwithIncludes.zip"), true))
     .then((zip) => {
       new DerivationEngine({ zip, featureModel: "model.json" }).then(
