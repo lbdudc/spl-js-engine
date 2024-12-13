@@ -22,7 +22,7 @@ export function readFile(filePath, bin = false) {
   if (bin) {
     return fs.readFileSync(filePath, null);
   } else {
-    return stripBom(fs.readFileSync(filePath, "utf8"));
+    return stripBom(fs.readFileSync(filePath, "utf8")).replace(/\r\n/g, "\n");
   }
 }
 

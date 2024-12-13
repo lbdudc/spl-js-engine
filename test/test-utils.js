@@ -15,6 +15,13 @@ export const removeTmpFolder = () => {
       fs.unlinkSync(file);
     }
   });
+  walkDir("tmp", (file, isFolder) => {
+    if (isFolder) {
+      fs.rmdirSync(file);
+    } else {
+      fs.unlinkSync(file);
+    }
+  });
 };
 
 export const assertEqualFilesInFolders = (first, second) => {

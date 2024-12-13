@@ -888,7 +888,6 @@ function _createMyCalculatorFMAndConstraints() {
   const divide = fm.constraint("Divide");
 
   fm.addConstraint(add.or(multiply));
-  fm.addConstraint(add.negated());
   fm.addConstraint(add.negated().or(capabilities));
   fm.addConstraint(capabilities.and(add));
   fm.addConstraint(multiply.implies(base));
