@@ -13,7 +13,6 @@
 
         angular.extend(vm, {
             number: number,
-            /*→ codeInsertionPoint1 ←*/
             setOperation: setOperation,
             clear: clear,
             calculate: calculate,
@@ -30,14 +29,19 @@
             values[_currentNumber()].nextFloat = false;
         }
 
-        /*→ codeInsertionPoint2 ←*/
-
         function setOperation(op) {
             if (operation.value !== null && values.second.value !== null) {
                 calculate(function () {
                     operation = op;
                 });
-            } else {
+            } 
+            /*→ codeInsertionPoint4 ←*/
+            else if (op.value == 'SQUARE_ROOT') {
+                operation = op;
+                calculate();
+            } 
+            /*→ codeInsertionPoint4 ←*/
+            else {
                 operation = op;
             }
         }
@@ -49,7 +53,6 @@
 
         function calculate(cb) {
             if (operation.value !== null && values.second.value !== null) {
-                console.log(values.second);
                 Calculator.calculate(values.first.value, values.second.value, operation.value).success(function (
                     result) {
                     values.first.value = result.value;
@@ -62,7 +65,7 @@
                 justCalculated = true;
             }
             /*→ codeInsertionPoint3 ←*/
-            if (operation.value == 'SQUARE_ROOT') {
+            if (operation.value !== null && operation.value == 'SQUARE_ROOT') {
                 Calculator.calculate(values.first.value, '', operation.value).success(function (
                     result) {
                     values.first.value = result.value;

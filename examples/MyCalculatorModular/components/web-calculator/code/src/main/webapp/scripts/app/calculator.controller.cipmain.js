@@ -37,7 +37,9 @@
                 calculate(function () {
                     operation = op;
                 });
-            } else {
+            } 
+            /*→ codeInsertionPoint4 ←*/
+            else {
                 operation = op;
             }
         }

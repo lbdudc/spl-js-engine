@@ -1,0 +1,19 @@
+{
+  "features": [
+    "add",
+    "subtract",
+    "multiply",
+    "power",
+    "square_root",
+    "decimal"
+  ],
+  "data": {
+    "title": "Web Calculator",
+    "description": "A simple web calculator",
+    "maven": {
+      "group": "es.udc.lbd",
+      "artifact": "web-calculator",
+      "version": 0.1
+    }
+  }
+}

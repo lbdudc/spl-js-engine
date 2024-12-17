@@ -1,16 +1,16 @@
 {
-    "features": [
-      "basic_operations.add",
-      "basic_operations.subtract",
-      "basic_operations.multiply"
-    ],
-    "data": {
-      "title": "Web Calculator",
-      "description": "A simple web calculator",
-      "maven": {
-        "group": "es.udc.lbd",
-        "artifact": "web-calculator",
-        "version": 0.1
-      }
+  "features": [
+    "add",
+    "subtract",
+    "multiply"
+  ],
+  "data": {
+    "title": "Web Calculator",
+    "description": "A simple web calculator",
+    "maven": {
+      "group": "es.udc.lbd",
+      "artifact": "web-calculator",
+      "version": 0.1
     }
-  }  
+  }
+}

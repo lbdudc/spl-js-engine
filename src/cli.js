@@ -24,12 +24,15 @@ export function cli() {
     verbose = false,
     zip,
     outputType = "folder",
+    components,
   } = cli.flags;
   const validation = cli.input.indexOf("validate") != -1;
 
-  if (!(code && featureModel) && !zip) {
-    cli.showHelp();
-  }
+  if (!(components)) {
+    if (!(code && featureModel) && !zip) {
+      cli.showHelp();
+    } 
+  }  
 
   const enginePromise = zip
     ? JSZip.loadAsync(fs.readFileSync(zip)).then((zipFile) =>
@@ -43,7 +46,7 @@ export function cli() {
           verbose
         )
       )
-    : cliLocal(code, featureModel, config, extra, modelTransformation, verbose);
+    : cliLocal(code, featureModel, config, extra, modelTransformation, verbose,components);
 
   enginePromise.then((engine) => {
     let productJson = {};
@@ -105,7 +108,8 @@ function cliLocal(
   config,
   extra,
   modelTransformation,
-  verbose
+  verbose,
+  components
 ) {
   let configJson = {};
   if (config) {
@@ -124,7 +128,8 @@ function cliLocal(
       configJson,
       extra ? readFile(extra) : null,
       mt,
-      verbose
+      verbose,
+      components ? readJsonFromFile(components) : null
     );
   } else {
     return new DerivationEngine(

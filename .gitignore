@@ -41,3 +41,4 @@ examples/**/output.zip
 .vscode
 .DS_Store
 .history
+/examples/**/tmp

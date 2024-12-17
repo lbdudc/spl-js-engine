@@ -20,7 +20,7 @@ export default class DerivationEngine {
     extraJS,
     modelTransformation,
     verbose,
-    components = []
+    components
   ) {
     const promises = [];
 
