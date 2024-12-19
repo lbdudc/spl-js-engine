@@ -1,31 +1,6 @@
-[
-    {
-        "name": "web_calculator",
-        "codePath": "./components/web-calculator/code",
-        "featureModel": "./components/web-calculator/featuremodel.uvl",
-        "config": "./components/web-calculator/config.json",
-        "path": "./components/web-calculator",
-        "main": true
-    },
-    {
-        "name": "advanced_operations",
-        "codePath": "./components/advanced-operations/code",
-        "featureModel": "./components/advanced-operations/featuremodel.uvl",
-        "config": "./components/advanced-operations/config.json",
-        "path": "./components/advanced-operations"
-    },
-    {
-        "name": "basic_operations",
-        "codePath": "./components/basic-operations/code",
-        "featureModel": "./components/basic-operations/featuremodel.uvl",
-        "config": "./components/basic-operations/config.json",
-        "path": "./components/basic-operations"
-    },
-    {
-        "name": "capabilities",
-        "codePath": "./components/capabilities/code",
-        "featureModel": "./components/capabilities/featuremodel.uvl",
-        "config": "./components/capabilities/config.json",
-        "path": "./components/capabilities"
-    }
-]
+{
+  "web_calculator": "./components/web-calculator",
+  "advanced_operations": "./components/advanced-operations",
+  "basic_operations": "./components/basic-operations",
+  "capabilities": "./components/capabilities"
+}
