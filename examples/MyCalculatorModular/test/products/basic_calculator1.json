@@ -1,8 +1,5 @@
 {
-  "features": [
-    "add",
-    "subtract"
-  ],
+  "features": ["add", "subtract"],
   "data": {
     "title": "Web Calculator",
     "description": "A simple web calculator",

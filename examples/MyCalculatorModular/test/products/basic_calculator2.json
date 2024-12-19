@@ -1,10 +1,5 @@
 {
-  "features": [
-    "add",
-    "subtract",
-    "multiply",
-    "divide"
-  ],
+  "features": ["add", "multiply"],
   "data": {
     "title": "Web Calculator",
     "description": "A simple web calculator",

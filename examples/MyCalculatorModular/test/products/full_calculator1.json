@@ -1,9 +1,5 @@
 {
-  "features": [
-    "add",
-    "subtract",
-    "decimal"
-  ],
+  "features": ["add", "subtract", "multiply", "divide"],
   "data": {
     "title": "Web Calculator",
     "description": "A simple web calculator",
