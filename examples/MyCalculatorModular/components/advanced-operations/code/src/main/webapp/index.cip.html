@@ -1,67 +1,21 @@
-<html>
-    <head>
-        <meta charset="UTF-8"/>
-        <title><!--%= data.title %--></title>
-        <link href="assets/styles/main.css" rel="stylesheet" />
-        <script src="bower_components/angular/angular.js"></script>
-        <script src="scripts/app/app.module.js"></script>
-        <script src="scripts/app/calculator.controller.js"></script>
-        <script src="scripts/app/calculator.service.js"></script>
-    </head>
-    <body ng-app="app">
-        <div class="calculator" ng-controller="CalculatorController as calcCtrl">
-            <div class="row">
-                <div class="display">
-                    <span>{{calcCtrl.getDisplay()}}</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="column">
-                    <div class="numeric-keyboard">
-                        <div class="row">
-                            <div class="button" ng-click="calcCtrl.number('7');">7</div>
-                            <div class="button" ng-click="calcCtrl.number('8');">8</div>
-                            <div class="button" ng-click="calcCtrl.number('9');">9</div>
-                        </div>
-                        <div class="row">
-                            <div class="button" ng-click="calcCtrl.number('4');">4</div>
-                            <div class="button" ng-click="calcCtrl.number('5');">5</div>
-                            <div class="button" ng-click="calcCtrl.number('6');">6</div>
-                        </div>
-                        <div class="row">
-                            <div class="button" ng-click="calcCtrl.number('1');">1</div>
-                            <div class="button" ng-click="calcCtrl.number('2');">2</div>
-                            <div class="button" ng-click="calcCtrl.number('3');">3</div>
-                        </div>
-                        <div class="row">
-                            <div class="button"></div>
-                            <div class="button" ng-click="calcCtrl.number('0');">0</div>
-                            <div class="button" ng-click="calcCtrl.calculate();">=</div>
-                        </div>
-                    </div>
-                </div>
-                /*→ codeInsertionPoint4 ←*/                    
-                <div class="column">
-                    <div class="functions-keyboard">                        
-                        <div class="row">                            
-                            <!--% if (feature.divide) { %-->
-                            <div class="button" ng-click="calcCtrl.setOperation(OP.DIVIDE);">&divide;</div>
-                            <!--% } %-->
-                        </div>
-                        <div class="row">
-                            <!--% if (feature.power) { %-->
-                            <div class="button" ng-click="calcCtrl.setOperation(OP.POWER);">^</div>
-                            <!--% } %-->
-                        </div>
-                        <div class="row">
-                            <!--% if (feature.square_root) { %-->
-                            <div class="button" ng-click="calcCtrl.setOperation(OP.SQUARE_ROOT);">&radic;</div>
-                            <!--% } %-->
-                        </div>  
-                    </div>
-                </div>
-                /*→ codeInsertionPoint4 ←*/
-            </div>
+/*→ codeInsertionPoint4 ←*/
+<div class="column">
+    <div class="functions-keyboard">
+        <div class="row">
+            <!--% if (feature.divide) { %-->
+            <div class="button" ng-click="calcCtrl.setOperation(OP.DIVIDE);">&divide;</div>
+            <!--% } %-->
         </div>
-    </body>
-</html>
+        <div class="row">
+            <!--% if (feature.power) { %-->
+            <div class="button" ng-click="calcCtrl.setOperation(OP.POWER);">^</div>
+            <!--% } %-->
+        </div>
+        <div class="row">
+            <!--% if (feature.square_root) { %-->
+            <div class="button" ng-click="calcCtrl.setOperation(OP.SQUARE_ROOT);">&radic;</div>
+            <!--% } %-->
+        </div>
+    </div>
+</div>
+/*→ codeInsertionPoint4 ←*/
