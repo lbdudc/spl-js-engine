@@ -1,0 +1,5 @@
+features
+    SPLcomponentC
+        optional
+            featureC
+            featureC1

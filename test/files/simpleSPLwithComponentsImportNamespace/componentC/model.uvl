@@ -1,0 +1,6 @@
+namespace compC
+features
+    SPLcomponentC
+        optional
+            featureC
+            featureCE

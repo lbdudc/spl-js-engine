@@ -272,7 +272,7 @@ export default class DerivationEngine {
       } catch (e) {
         if (featureModel.endsWith("uvl")) {
           this.featureModel = FeatureModel.fromUVL(featureModel, components);
-          if (components.length > 0) {
+          if (Object.keys(components).length > 0) {
             this.components = true;
             this.setComponents(featureModel, components);
           }
@@ -322,8 +322,8 @@ export default class DerivationEngine {
   setComponents(featureModel, components) {
     let names = UVLFeatureModel.getUVLImports(featureModel,components);
     names.forEach((name) => {
-      const component = components.find((c) => c.name === name);
-      let config = readJsonFromFile(component.config);
+      let codePath = components[name];
+      let config = readJsonFromFile(codePath+"/config.json");
       if (Array.isArray(config.delimiters)) {
         config.delimiters.forEach((d) => {
           d.extension.forEach((e) => {
@@ -332,7 +332,7 @@ export default class DerivationEngine {
           });
         });
       }
-      this.input.addCodePath(component.codePath, component.main);
+      this.input.addCodePath(codePath+"/code", name === Object.keys(components)[0] ? true : false);
     });
   }
 }

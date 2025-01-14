@@ -29,23 +29,11 @@ test("Create a product with UVL format", async () => {
 });
 
 test("Create a product with two components", async () => {
-  const components = [
-    {
-      name: "componentA",
-      codePath: p("simpleSPLwithComponents/componentA/code"),
-      featureModel: p("simpleSPLwithComponents/componentA/model.uvl"),
-      config: p("simpleSPLwithComponents/componentA/config.json"),
-      path: p("simpleSPLwithComponents/componentA"),
-      main: true,
-    },
-    {
-      name: "componentB",
-      codePath: p("simpleSPLwithComponents/componentB/code"),
-      featureModel: p("simpleSPLwithComponents/componentB/model.uvl"),
-      config: p("simpleSPLwithComponents/componentB/config.json"),
-      path: p("simpleSPLwithComponents/componentB"),
-    },
-  ];
+  
+  const components = {
+    "componentA": p("simpleSPLwithComponents/componentA"),
+    "componentB": p("simpleSPLwithComponents/componentB")
+  };
 
   const engine = await new DerivationEngine({
     featureModel: p("simpleSPLwithComponents/model.uvl"),
@@ -64,30 +52,11 @@ test("Create a product with two components", async () => {
 });
 
 test("Create a product with three components", async () => {
-  const components = [
-    {
-      name: "componentA",
-      codePath: p("simpleSPLwithComponents2/componentA/code"),
-      featureModel: p("simpleSPLwithComponents2/componentA/model.uvl"),
-      config: p("simpleSPLwithComponents2/componentA/config.json"),
-      path: p("simpleSPLwithComponents2/componentA"),
-      main: true,
-    },
-    {
-      name: "componentB",
-      codePath: p("simpleSPLwithComponents2/componentB/code"),
-      featureModel: p("simpleSPLwithComponents2/componentB/model.uvl"),
-      config: p("simpleSPLwithComponents2/componentB/config.json"),
-      path: p("simpleSPLwithComponents2/componentB"),
-    },
-    {
-      name: "componentC",
-      codePath: p("simpleSPLwithComponents2/componentC/code"),
-      featureModel: p("simpleSPLwithComponents2/componentC/model.uvl"),
-      config: p("simpleSPLwithComponents2/componentC/config.json"),
-      path: p("simpleSPLwithComponents2/componentC"),
-    },
-  ];
+  const components = {
+    "componentA": p("simpleSPLwithComponents2/componentA"),
+    "componentB": p("simpleSPLwithComponents2/componentB"),
+    "componentC": p("simpleSPLwithComponents2/componentC")
+  };
 
   const engine = await new DerivationEngine({
     featureModel: p("simpleSPLwithComponents2/model.uvl"),
@@ -105,24 +74,58 @@ test("Create a product with three components", async () => {
   );
 });
 
+test("Create a product with components with imports", async () => {
+  const components = {
+    "componentA": p("simpleSPLwithComponentsImport/componentA"),
+    "componentB": p("simpleSPLwithComponentsImport/componentB")
+  };
+
+  const engine = await new DerivationEngine({
+    featureModel: p("simpleSPLwithComponentsImport/model.uvl"),
+    components: components,
+  });
+
+  engine.generateProduct(
+    p("tmp/simpleProduct"),
+    readJsonFromFile(p("simpleSPLwithComponentsImport/product.json"))
+  );
+
+  assertEqualFilesInFolders(
+    p("simpleSPLwithComponentsImport/expected"),
+    p("tmp/simpleProduct")
+  );
+});
+
+
+test("Create a product with components with duplicate imports", async () => {
+  const components = {
+    "componentA": p("simpleSPLwithComponentsImportDuplicate/componentA"),
+    "componentB": p("simpleSPLwithComponentsImportDuplicate/componentB")
+  };
+
+  const engine = await new DerivationEngine({
+    featureModel: p("simpleSPLwithComponentsImportDuplicate/model.uvl"),
+    components: components,
+  });
+
+  engine.generateProduct(
+    p("tmp/simpleProduct"),
+    readJsonFromFile(p("simpleSPLwithComponentsImportDuplicate/product.json"))
+  );
+
+  assertEqualFilesInFolders(
+    p("simpleSPLwithComponentsImportDuplicate/expected"),
+    p("tmp/simpleProduct")
+  );
+});
+
+
 test("Create a product with components and different delimiters", async () => {
-  const components = [
-    {
-      name: "componentA",
-      codePath: p("simpleSPLwithComponents/componentA/code"),
-      featureModel: p("simpleSPLwithComponents/componentA/model.uvl"),
-      config: p("simpleSPLwithComponents/componentA/config.json"),
-      path: p("simpleSPLwithComponents/componentA"),
-      main: true,
-    },
-    {
-      name: "componentB",
-      codePath: p("simpleSPLwithComponents/componentB/code"),
-      featureModel: p("simpleSPLwithComponents/componentB/model.uvl"),
-      config: p("simpleSPLwithComponents/componentB/config.json"),
-      path: p("simpleSPLwithComponents/componentB"),
-    },
-  ];
+  const components = {
+    "componentA": p("simpleSPLwithComponentsDelimiter/componentA"),
+    "componentB": p("simpleSPLwithComponentsDelimiter/componentB"),
+    "componentC": p("simpleSPLwithComponentsDelimiter/componentC")
+  };
 
   const engine = await new DerivationEngine({
     featureModel: p("simpleSPLwithComponentsDelimiter/model.uvl"),

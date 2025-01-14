@@ -1,0 +1,14 @@
+imports
+    componentC
+    componentD
+    componentE 
+    componentF as aliasF
+features
+    SPLcomponentB
+        optional
+            featureB
+            featureB1
+            featureB2
+            compC.SPLcomponentC
+            componentE.SPLcomponentE
+            aliasF.SPLcomponentF

@@ -1,11 +1,21 @@
 import { UVLJavaScriptParser, FeatureModel } from "uvl-parser";
 import FeatureModelSPL from "./feature-model.js";
 import Feature from "./feature.js";
+import { readJsonFromFile, readFile } from "../file-utils.js";
 
 export default class UVLFeatureModel {
   constructor(filePathUVL, components) {
     this.components = components;
     this.filePathUVL = filePathUVL;
+    this.imports = [];
+  }
+
+  static getAliasImport(childImport){
+    let aliasChildImport = null;
+    if (childImport.alias!== null){
+      aliasChildImport = childImport.alias.getText().trim()
+    }
+    return aliasChildImport
   }
 
   static getUVLImports(featureModel,components) {
@@ -16,20 +26,15 @@ export default class UVLFeatureModel {
     if (listImports !== null) {
       listImports.children.forEach((childImport) => {
         if (childImport instanceof UVLJavaScriptParser.ImportLineContext) {
-          childImport.children.forEach((child) => {
-            if (child instanceof UVLJavaScriptParser.ReferenceContext) {
-              const nameImport = child.getText();
-              paths.push(nameImport);
-              const component = components.find(
-                (c) => c.name === nameImport
-              );
-              childImport = UVLFeatureModel.getUVLImports(component.featureModel,components);
-              paths = childImport.length > 0 ? paths.concat(childImport) : paths;
-            }
-          });
+          let nameChildImport = childImport.ns.getText().trim();
+          let aliasChildImport = UVLFeatureModel.getAliasImport(childImport);
+          paths.push(nameChildImport);
+          let codePathImport = components[nameChildImport];              
+          childImport = UVLFeatureModel.getUVLImports(codePathImport+"/model.uvl",components);
+          paths = childImport.length > 0 ? paths.concat(childImport) : paths;
         }
       });
-    }
+    }          
     return paths;
   }
 
@@ -43,6 +48,7 @@ export default class UVLFeatureModel {
   }
 
   getUVLFeature(tree) {
+    const namespace = this.getNamespace(tree);
     const listFeatures = tree.features();
     const listImports = tree.imports();
     if (listFeatures !== null) {
@@ -56,6 +62,18 @@ export default class UVLFeatureModel {
         listImports
       );
       return fm;
+    }
+  }
+
+  getNamespace(tree) {
+    const namespace = tree.namespace();
+    if (namespace instanceof UVLJavaScriptParser.NamespaceContext) {
+        namespace.children.forEach((child) => {
+          if (child instanceof UVLJavaScriptParser.ReferenceContext) {
+              const name = child.getText();
+              return name;
+          }
+          });
     }
   }
 
@@ -103,8 +121,8 @@ export default class UVLFeatureModel {
                 const _feature = Feature.fromUVL(newFeature, parent, typeFinal);
                 this.getUVLFeatureChildren(_group, fm, typeChild, _feature);
               } else {
-                let nameImport = referenceContext.getChild(0).getText();
-                let nameFeature = referenceContext.getChild(2).getText();
+                let nameImport = referenceContext.getChild(0).getText().trim();
+                let nameFeature = referenceContext.getChild(2).getText().trim();
                 this.getUVLImport(listImports, nameImport, nameFeature, fm);
               }
             }
@@ -118,18 +136,36 @@ export default class UVLFeatureModel {
     if (listImports !== null) {
       listImports.children.forEach((childImport) => {
         if (childImport instanceof UVLJavaScriptParser.ImportLineContext) {
-          childImport.children.forEach((child) => {
-            if (
-              child instanceof UVLJavaScriptParser.ReferenceContext &&
-              child.getText() == nameImport
-            ) {
-              const component = this.components.find(
-                (c) => c.name === nameImport
-              );
-              const fm_ = new FeatureModel(component.featureModel);
+          let nameChildImport = childImport.ns.getText().trim();
+          let aliasChildImport = UVLFeatureModel.getAliasImport(childImport);
+          if (
+              nameChildImport == nameImport || aliasChildImport == nameImport
+            ) {              
+              let codePathImport = this.components[nameChildImport];    
+              if (this.imports.indexOf(nameImport) !== -1){
+                return; 
+              } else {
+                this.imports.push(nameImport);          
+              }
+              const fm_ = new FeatureModel(codePathImport+"/model.uvl");
               const tree_import = fm_.getFeatureModel();
               const _listFeatures = tree_import.features();
               const _listImports = tree_import.imports();
+
+              const namespaceImport = this.getNamespace(tree_import);
+              
+              if (_listImports !== null) {
+                try {
+                  let comp = readJsonFromFile(codePathImport+"/components.json")
+                  if (comp) {
+                      Object.assign(this.components, comp);
+                  } 
+                }
+                catch (error) {
+                    throw ("Error reading the JSON file 'components.json':");
+                }
+              }                
+              
               if (_listFeatures !== null) {
                 const feature = _listFeatures.feature();
                 if (feature.getChild(0).getText() == nameFeature) {
@@ -150,8 +186,7 @@ export default class UVLFeatureModel {
                   this.getUVLConstraints(tree_import, fm);
                 }
               }
-            }
-          });
+          }
         }
       });
     }
