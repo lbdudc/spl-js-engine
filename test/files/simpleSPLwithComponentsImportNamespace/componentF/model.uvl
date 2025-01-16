@@ -1,5 +1,8 @@
+imports
+    componentD
 features
     SPLcomponentF
         optional
             featureF
             featureFF
+            componentD.SPLcomponentD

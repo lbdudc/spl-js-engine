@@ -59,7 +59,8 @@ export default class UVLFeatureModel {
         fm,
         "mandatory",
         fm,
-        listImports
+        listImports,
+        null
       );
       return fm;
     }
@@ -67,14 +68,16 @@ export default class UVLFeatureModel {
 
   getNamespace(tree) {
     const namespace = tree.namespace();
+    let name = null;
     if (namespace instanceof UVLJavaScriptParser.NamespaceContext) {
         namespace.children.forEach((child) => {
           if (child instanceof UVLJavaScriptParser.ReferenceContext) {
-              const name = child.getText();
-              return name;
+              name = child.getText();
+              return true;
           }
-          });
+        });
     }
+    return name;
   }
 
   getContextType(group) {
@@ -101,7 +104,7 @@ export default class UVLFeatureModel {
     return type;
   }
 
-  getUVLFeatureChildren(group, fm, type, parent, listImports) {
+  getUVLFeatureChildren(group, fm, type, parent, listImports, aliasImport) {
     group.forEach((f1) => {
       const typeChild = this.getContextType(f1);
       const typeFinal =
@@ -116,14 +119,14 @@ export default class UVLFeatureModel {
                 let newFeature = {
                   disabled: "false",
                   mandatory: typeChild == "mandatory" ? "true" : false,
-                  name: referenceContext.getText(),
+                  name: aliasImport != null ? aliasImport+'.'+referenceContext.getText() : referenceContext.getText(),
                 };
                 const _feature = Feature.fromUVL(newFeature, parent, typeFinal);
-                this.getUVLFeatureChildren(_group, fm, typeChild, _feature);
+                this.getUVLFeatureChildren(_group, fm, typeChild, _feature,aliasImport);
               } else {
                 let nameImport = referenceContext.getChild(0).getText().trim();
                 let nameFeature = referenceContext.getChild(2).getText().trim();
-                this.getUVLImport(listImports, nameImport, nameFeature, fm);
+                this.getUVLImport(listImports, nameImport, nameFeature, parent);
               }
             }
           });
@@ -138,22 +141,23 @@ export default class UVLFeatureModel {
         if (childImport instanceof UVLJavaScriptParser.ImportLineContext) {
           let nameChildImport = childImport.ns.getText().trim();
           let aliasChildImport = UVLFeatureModel.getAliasImport(childImport);
+          let codePathImport = this.components[nameChildImport];   
+          if (codePathImport == null){
+            return;
+          }
+          const fm_ = new FeatureModel(codePathImport+"/model.uvl");
+          const tree_import = fm_.getFeatureModel();               
+          let namespaceImport = this.getNamespace(tree_import);
           if (
-              nameChildImport == nameImport || aliasChildImport == nameImport
+              nameChildImport == nameImport || aliasChildImport == nameImport || namespaceImport == nameImport
             ) {              
-              let codePathImport = this.components[nameChildImport];    
               if (this.imports.indexOf(nameImport) !== -1){
                 return; 
               } else {
                 this.imports.push(nameImport);          
               }
-              const fm_ = new FeatureModel(codePathImport+"/model.uvl");
-              const tree_import = fm_.getFeatureModel();
               const _listFeatures = tree_import.features();
               const _listImports = tree_import.imports();
-
-              const namespaceImport = this.getNamespace(tree_import);
-              
               if (_listImports !== null) {
                 try {
                   let comp = readJsonFromFile(codePathImport+"/components.json")
@@ -181,7 +185,8 @@ export default class UVLFeatureModel {
                     fm,
                     "mandatory",
                     _feature,
-                    _listImports
+                    _listImports,
+                    aliasChildImport != null ? aliasChildImport : namespaceImport != null ? namespaceImport : null
                   );
                   this.getUVLConstraints(tree_import, fm);
                 }
@@ -250,4 +255,3 @@ export default class UVLFeatureModel {
     }
   }
 }
-

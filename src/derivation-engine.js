@@ -252,7 +252,23 @@ export default class DerivationEngine {
     if (!productFeatures) return {};
     const features = {};
     this.featureModel.completeFeatureSelection(productFeatures).forEach((f) => {
-      features[f] = true;
+      if (f.includes('.')){
+        const keys = f.split('.'); 
+        let current = features;
+        keys.forEach((k, index) => {
+          if (index === keys.length - 1) {
+            current[k] = true;
+          } else {
+            if (!current[k]) {
+              current[k] = {};
+            }
+            current = current[k];
+          }
+        });
+      }
+      else {
+        features[f] = true;  
+      }
     });
     return features;
   }

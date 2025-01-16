@@ -119,6 +119,27 @@ test("Create a product with components with duplicate imports", async () => {
   );
 });
 
+test("Create a product with components with imports and namespace", async () => {
+  const components = {
+    "componentA": p("simpleSPLwithComponentsImportNamespace/componentA"),
+    "componentB": p("simpleSPLwithComponentsImportNamespace/componentB")
+  };
+
+  const engine = await new DerivationEngine({
+    featureModel: p("simpleSPLwithComponentsImportNamespace/model.uvl"),
+    components: components,
+  });
+
+  engine.generateProduct(
+    p("tmp/simpleProduct"),
+    readJsonFromFile(p("simpleSPLwithComponentsImportNamespace/product.json"))
+  );
+
+  assertEqualFilesInFolders(
+    p("simpleSPLwithComponentsImportNamespace/expected"),
+    p("tmp/simpleProduct")
+  );
+});
 
 test("Create a product with components and different delimiters", async () => {
   const components = {

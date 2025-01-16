@@ -3,6 +3,6 @@
 
     alert('Hello World');
     /*→ codeInsertionPoint1 ←*/
-    /*% if (feature.featureC) { */alert('Feature C');/*% } */
+    /*% if (feature.compC.featureC) { */alert('Feature C');/*% } */
     /*→ codeInsertionPoint1 ←*/
 })();

@@ -1,6 +1,5 @@
 imports
     componentC
-    componentD
     componentE 
     componentF as aliasF
 features
