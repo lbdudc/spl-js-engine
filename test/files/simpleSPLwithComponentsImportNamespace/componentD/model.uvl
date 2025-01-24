@@ -2,4 +2,13 @@ features
     SPLcomponentD
         optional
             featureD
+                optional
+                    featureDD
+                        optional
+                            featureDDD
+                            featureDDD1
+                    featureDD1
+                        or
+                            featureDD11
+                            featureDD12
             featureD1

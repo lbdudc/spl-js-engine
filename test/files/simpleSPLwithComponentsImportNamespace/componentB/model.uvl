@@ -11,3 +11,8 @@ features
             compC.SPLcomponentC
             componentE.SPLcomponentE
             aliasF.SPLcomponentF
+constraints
+    featureB1 => componentE.featureE
+    featureB2 <=> aliasF.featureFF
+    featureB & aliasF.featureF => aliasF.compG.featureG1G1
+    aliasF.featureFF => compC.featureC1

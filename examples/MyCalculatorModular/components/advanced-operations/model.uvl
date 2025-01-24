@@ -2,7 +2,7 @@ imports
   capabilities
 features
     AdvancedOperations {abstract}
-      alternative
+      optional
         capabilities.Capabilities
         divide
         power

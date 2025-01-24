@@ -1,0 +1,18 @@
+namespace compG
+features
+    SPLcomponentG
+        optional
+            featureG
+                mandatory
+                    featureGG
+                        alternative
+                            featureGG1 
+                            featureGG2 
+            featureG1
+                optional
+                    featureG1G1    
+                optional
+                    featureG1G2
+                        or
+                            featureG1G2G1
+                            featureG1G2G2

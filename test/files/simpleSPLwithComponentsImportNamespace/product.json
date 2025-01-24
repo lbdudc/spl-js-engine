@@ -1,11 +1,14 @@
 {
   "features": [
     "featureA",
+    "featureB",
     "featureB1",
+    "featureB2",
     "compC.featureC",
-    "featureD",
+    "featureDDD1",
     "compC.featureCE",
     "featureCE",
-    "aliasF.featureF"
+    "aliasF.featureF",
+    "compG.featureGG1"
   ]
 }

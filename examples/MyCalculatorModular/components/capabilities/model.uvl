@@ -1,4 +1,4 @@
 features
   Capabilities {abstract}
-    alternative
+    optional
       decimal

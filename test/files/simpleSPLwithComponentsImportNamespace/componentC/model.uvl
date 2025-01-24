@@ -3,4 +3,7 @@ features
     SPLcomponentC
         optional
             featureC
+                optional
+                    featureC1
+                    featureC2            
             featureCE

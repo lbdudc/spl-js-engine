@@ -1,3 +1,4 @@
 {
-  "componentD": "test/files/simpleSPLwithComponentsImportNamespace/componentD" 
+  "componentD": "test/files/simpleSPLwithComponentsImportNamespace/componentD",
+  "componentG": "test/files/simpleSPLwithComponentsImportNamespace/componentG" 
 }

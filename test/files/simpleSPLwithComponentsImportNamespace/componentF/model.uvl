@@ -1,8 +1,10 @@
 imports
     componentD
+    componentG
 features
     SPLcomponentF
         optional
             featureF
             featureFF
             componentD.SPLcomponentD
+            compG.SPLcomponentG

@@ -1,0 +1,4 @@
+{
+  "web_calculator": "./components/web-calculator",
+  "basic_operations": "./components/basic-operations"
+}
