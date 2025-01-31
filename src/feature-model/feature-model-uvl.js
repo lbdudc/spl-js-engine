@@ -2,6 +2,7 @@ import { UVLJavaScriptParser, FeatureModel } from "uvl-parser";
 import FeatureModelSPL from "./feature-model.js";
 import Feature from "./feature.js";
 import { readJsonFromFile, readFile } from "../file-utils.js";
+import TYPE from "./feature-type.js";
 
 export default class UVLFeatureModel {
   constructor(filePathUVL, components) {
@@ -207,9 +208,6 @@ export default class UVLFeatureModel {
       case contraintContext instanceof UVLJavaScriptParser.OrConstraintContext:
         type = "disj";
         break;
-      //case contraintContext instanceof UVLJavaScriptParser.LiteralConstraintContext:
-      //  type = 'alt'
-      //  break;
       //case contraintContext instanceof UVLJavaScriptParser.ParenthesisConstraintContext:
       //  type = 'and'
       //  break;
@@ -278,4 +276,76 @@ export default class UVLFeatureModel {
       });
     }
   }
+
+  static toUVL(featureModel){
+    let uvlModel = null;
+    uvlModel = (UVLFeatureModel.readFeatures(featureModel, "features", 0) + UVLFeatureModel.readConstraints(featureModel));
+    return uvlModel;
+  }
+
+  static readFeatures(feature, result, tabCount) {
+    tabCount += 1;
+    result += "\n" + "\t".repeat(tabCount) + feature.name.trim() + this.readAttributes(feature);
+    tabCount += 1;    
+    let mandatory = false;
+    let relationName = null;
+    feature.features.forEach((featureNode,index) => {
+        if ((featureNode.mandatory & !mandatory) || (!featureNode.mandatory & mandatory) || index===0) {
+          relationName = this.serializeType(feature.type, featureNode.mandatory);   
+          if (relationName !== "") {
+            result += "\n" + "\t".repeat(tabCount) + relationName;
+          }       
+        } 
+        mandatory = featureNode.mandatory;
+        result = this.readFeatures(featureNode, result, tabCount);
+    });
+    return result;
+  }
+
+  static readAttributes(feature) {
+    const attributes = [];
+    if (feature.abstract) {
+      attributes.push("abstract");
+    } else if (feature.hidden) {
+      attributes.push("hidden");
+    }    
+    return attributes.length > 0 ? ` {${attributes.join(", ")}}` : "";
+  }
+
+  static serializeType(type,mandatory) {
+    let result = "";
+    if (mandatory) {
+      result = "mandatory"; 
+    } else if (type == TYPE.ALT) {
+      result = "alternative";
+    } else if (type == TYPE.AND) {
+      result = "optional";
+    } else if (type == TYPE.OR) {
+      result = "or";
+    } else if (type == TYPE.FEATURE) {
+      result = "";
+    } 
+    return result;
+  }
+
+  static readConstraints(featureModel) {
+    let result = "";
+    const constraints = featureModel.constraintSet.constraints;
+    if (constraints && constraints.length > 0) {
+      result = "constraints";
+      constraints.forEach((constraint) => {
+        const constraintText = this.serializeConstraint(constraint);
+        result += "\n\t" + constraintText;
+      });
+    }
+    return result == "" ? "" : "\n" + result;
+  }
+
+  static serializeConstraint(ctc) {
+     return ctc.toString()
+      .replace(/\bOR\b/g, "|")
+      .replace(/\bAND\b/g, "&")
+      .replace(/\bNOT\b/g, "!");
+  }  
+
 }

@@ -1,0 +1,7 @@
+features
+	FMName {abstract}
+		mandatory
+			f1
+			f2
+		optional
+			f3

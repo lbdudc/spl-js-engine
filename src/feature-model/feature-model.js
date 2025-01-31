@@ -232,6 +232,10 @@ export default class FeatureModel extends Feature {
     return featureModelUVL.getUVLFeatureModel();
   }
 
+  toUVL() {
+    return UVLFeatureModel.toUVL(this);
+  }
+
   /////////////////////
   // Private Methods //
   /////////////////////

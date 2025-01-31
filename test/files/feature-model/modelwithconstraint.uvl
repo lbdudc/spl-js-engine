@@ -1,0 +1,60 @@
+features
+	SimpleSPL {abstract}
+		optional
+			SPLcomponentA
+				optional
+					featureA
+					featureAA
+			SPLcomponentB
+				optional
+					featureB
+					featureB1
+					featureB2
+					compC.SPLcomponentC
+						optional
+							compC.featureC
+								optional
+									compC.featureC1
+									compC.featureC2
+							compC.featureCE
+					SPLcomponentE
+						optional
+							featureE
+							featureCE
+					aliasF.SPLcomponentF
+						optional
+							aliasF.featureF
+							aliasF.featureFF
+							SPLcomponentD
+								optional
+									featureD
+										optional
+											featureDD
+												optional
+													featureDDD
+													featureDDD1
+											featureDD1
+												or
+													featureDD11
+													featureDD12
+									featureD1
+							compG.SPLcomponentG
+								optional
+									compG.featureG
+										mandatory
+											compG.featureGG
+												alternative
+													compG.featureGG1
+													compG.featureGG2
+									compG.featureG1
+										optional
+											compG.featureG1G1
+											compG.featureG1G2
+												or
+													compG.featureG1G2G1
+													compG.featureG1G2G2
+constraints
+	(featureB1 => featureE)
+	(featureB2 <=> aliasF.featureFF)
+	((featureB & aliasF.featureF) => compG.featureG1G1)
+	(aliasF.featureFF => compC.featureC1)
