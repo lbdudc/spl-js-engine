@@ -279,6 +279,7 @@ export default class DerivationEngine {
 
   setFeatureModel(featureModel, components = []) {
     if (!featureModel) throw "feature model must be provided";
+    components = components ? components : [];
 
     if (typeof featureModel == "object") {
       this.featureModel = FeatureModel.fromJson(featureModel);
