@@ -1,0 +1,9 @@
+features
+	FMName {abstract}
+		or
+			f1
+			f2
+			f3
+				alternative
+					f5
+					f6

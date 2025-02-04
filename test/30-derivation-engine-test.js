@@ -314,3 +314,21 @@ test("Provide an exception if there is a problem with @includes", async () => {
     readJsonFromFile(p("simpleSPLwithIncludes/productWithErrors.json"));
   }, /@includes directive pointing a not existing path/);
 });
+
+test("Create a product with UVL format", async () => {
+  const engine = await new DerivationEngine(
+    p("simpleSPLwithUVL/code"),
+    p("simpleSPLwithUVL/model.uvl"),
+    readJsonFromFile(p("simpleSPLwithUVL/config.json"))
+  );
+
+  engine.generateProduct(
+    p("tmp/simpleProduct"),
+    readJsonFromFile(p("simpleSPLwithUVL/product.json"))
+  );
+
+  assertEqualFilesInFolders(
+    p("simpleSPLwithUVL/expected"),
+    p("tmp/simpleProduct")
+  );
+});

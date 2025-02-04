@@ -218,7 +218,11 @@ export default class DerivationEngine {
       try {
         this.featureModel = FeatureModel.fromJson(JSON.parse(featureModel));
       } catch (e) {
-        this.featureModel = FeatureModel.fromXml(featureModel);
+        if (featureModel.endsWith("uvl")) {
+          this.featureModel = FeatureModel.fromUVL(featureModel);          
+        } else {
+          this.featureModel = FeatureModel.fromXml(featureModel);
+        }
       }
     }
 

@@ -1,0 +1,16 @@
+features
+	MyCalculator {abstract}
+	    mandatory
+	      base
+	        optional
+	            operations {abstract}
+	                optional
+	                    add
+	                    subtract
+	                    multiply
+	                    divide
+	            capabilities {abstract}
+	                optional
+	                    decimal
+constraints
+	divide => decimal

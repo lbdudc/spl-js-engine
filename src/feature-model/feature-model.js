@@ -5,6 +5,7 @@ import ConstraintSet from "./constraints/constraint-set.js";
 import TYPE from "./feature-type.js";
 import Constraint from "./constraints/constraint.js";
 import FeatureSelectionError from "./feature-selection-error.js";
+import UVLFeatureModel from "./feature-model-uvl.js";
 
 export default class FeatureModel extends Feature {
   constructor(name) {
@@ -220,6 +221,19 @@ export default class FeatureModel extends Feature {
     json.featureModel.constraints = this.constraintSet.toJson();
 
     return json;
+  }
+
+  /////////////////////////////
+  // Parsing and Loading UVL //
+  /////////////////////////////
+
+  static fromUVL(uvlfile, components) {
+    const featureModelUVL = new UVLFeatureModel(uvlfile, components);
+    return featureModelUVL.getUVLFeatureModel();
+  }
+
+  toUVL() {
+    return UVLFeatureModel.toUVL(this);
   }
 
   /////////////////////

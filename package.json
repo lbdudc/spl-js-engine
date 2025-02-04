@@ -4,11 +4,13 @@
     "spl-js-engine": "./src/cli.js"
   },
   "dependencies": {
+    "antlr4": "^4.13.1",
     "eval": "^0.1.8",
     "istextorbinary": "^6.0.0",
     "jszip": "^3.10.1",
     "meow": "^12.0.1",
     "strip-bom": "^5.0.0",
+    "uvl-parser": "^0.0.3",
     "xml-writer": "^1.7.0",
     "xmldoc": "^0.5.1"
   },

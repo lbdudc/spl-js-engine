@@ -117,9 +117,13 @@ function cliLocal(
     mt = readFile(modelTransformation);
   }
 
+  if (!featureModel.endsWith("uvl")) {
+    featureModel = readFile(featureModel)
+  }
+
   return new DerivationEngine(
     code,
-    readFile(featureModel),
+    featureModel,
     configJson,
     extra ? readFile(extra) : null,
     mt,

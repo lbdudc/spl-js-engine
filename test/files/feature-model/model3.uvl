@@ -1,0 +1,12 @@
+features
+	FMName {abstract}
+		optional
+			f1
+		mandatory
+			f2
+		optional
+			f3
+		mandatory
+			f4
+constraints
+	(f1 & f3)

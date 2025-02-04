@@ -239,6 +239,24 @@ export default class Feature {
     return json;
   }
 
+  /////////////////////////////
+  // Parsing and Loading UVL //
+  /////////////////////////////
+
+  static fromUVL(uvl, parent, type) {
+    // parent[type] is parent.{and, or, alt},
+    // so we are creating a new child feature
+
+    const newFeature = parent[type](uvl);
+
+    if (Array.isArray(uvl.children)) {
+      uvl.children.forEach(function (f) {
+        Feature.fromUVL(f, newFeature, uvl.name);
+      });
+    }
+    return newFeature;
+  }
+
   /////////////////////
   // Private Methods //
   /////////////////////
