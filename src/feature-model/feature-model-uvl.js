@@ -1,4 +1,4 @@
-import { UVLJavaScriptParser, FeatureModel } from "uvl-parser";
+import { UVLJavaScriptParser, FeatureModel } from "modular-uvl-parser";
 import FeatureModelSPL from "./feature-model.js";
 import Feature from "./feature.js";
 import { readJsonFromFile, readFile } from "../file-utils.js";
@@ -28,12 +28,14 @@ export default class UVLFeatureModel {
     if (listImports !== null) {
       listImports.children.forEach((childImport) => {
         if (childImport instanceof UVLJavaScriptParser.ImportLineContext) {
-          let nameChildImport = childImport.ns.getText().trim();
-          let aliasChildImport = UVLFeatureModel.getAliasImport(childImport);
-          paths.push(nameChildImport);
-          let codePathImport = components[nameChildImport];
-          childImport = UVLFeatureModel.getUVLImports(codePathImport+"/model.uvl",components);
-          paths = childImport.length > 0 ? paths.concat(childImport) : paths;
+          childImport.children.forEach((childImportLine) => {
+            let nameChildImport = childImportLine.ns.getText().trim();
+            let aliasChildImport = UVLFeatureModel.getAliasImport(childImportLine);
+            paths.push(nameChildImport);
+            let codePathImport = components[nameChildImport];
+            childImportLine = UVLFeatureModel.getUVLImports(codePathImport+"/model.uvl",components);
+            paths = childImportLine.length > 0 ? paths.concat(childImportLine) : paths;
+          });
         }
       });
     }          
@@ -138,61 +140,63 @@ export default class UVLFeatureModel {
     if (listImports !== null) {
       listImports.children.forEach((childImport) => {
         if (childImport instanceof UVLJavaScriptParser.ImportLineContext) {
-          let nameChildImport = childImport.ns.getText().trim();
-          let aliasChildImport = UVLFeatureModel.getAliasImport(childImport);
-          let codePathImport = this.components[nameChildImport];  
-          if (codePathImport == null){
-            return;
-          }
-          const fm_ = new FeatureModel(codePathImport+"/model.uvl");
-          const tree_import = fm_.getFeatureModel();               
-          let namespaceImport = this.getNamespace(tree_import);
-          let aliasImport = aliasChildImport != null ? aliasChildImport : namespaceImport != null ? namespaceImport : null;
-          if (
-              nameChildImport == nameImport || aliasImport == nameImport
-            ) { 
-              if (this.imports.some(importObj => 
-                  importObj.import === nameImport ||
-                  importObj.alias === nameImport 
-                )) {  
-                return;
-              } else {
-                this.imports.push({ import: nameChildImport, alias: aliasImport});
-              }
-              const _listFeatures = tree_import.features();
-              const _listImports = tree_import.imports();
-              if (_listImports !== null) {
-                try {
-                  let comp = readJsonFromFile(codePathImport+"/components.json")
-                  if (comp) {
-                      Object.assign(this.components, comp);
-                  } 
+          childImport.children.forEach((childImportLine) => {
+            let nameChildImport = childImportLine.ns.getText().trim();
+            let aliasChildImport = UVLFeatureModel.getAliasImport(childImportLine);
+            let codePathImport = this.components[nameChildImport];  
+            if (codePathImport == null){
+              return;
+            }
+            const fm_ = new FeatureModel(codePathImport+"/model.uvl");
+            const tree_import = fm_.getFeatureModel();               
+            let namespaceImport = this.getNamespace(tree_import);
+            let aliasImport = aliasChildImport != null ? aliasChildImport : namespaceImport != null ? namespaceImport : null;
+            if (
+                nameChildImport == nameImport || aliasImport == nameImport
+              ) { 
+                if (this.imports.some(importObj => 
+                    importObj.import === nameImport ||
+                    importObj.alias === nameImport 
+                  )) {  
+                  return;
+                } else {
+                  this.imports.push({ import: nameChildImport, alias: aliasImport});
                 }
-                catch (error) {
-                    throw ("Error reading the JSON file 'components.json':");
+                const _listFeatures = tree_import.features();
+                const _listImports = tree_import.imports();
+                if (_listImports !== null) {
+                  try {
+                    let comp = readJsonFromFile(codePathImport+"/components.json")
+                    if (comp) {
+                        Object.assign(this.components, comp);
+                    } 
+                  }
+                  catch (error) {
+                      throw ("Error reading the JSON file 'components.json':");
+                  }
+                }                
+                if (_listFeatures !== null) {
+                  const feature = _listFeatures.feature();
+                  let group = feature.group();    
+                  let _feature = null;
+                  if (feature.getChild(0).getText() == nameFeature) {
+                    let newFeature = {
+                      disabled: false,
+                      mandatory: false,
+                      name: aliasImport != null ? aliasImport+'.'+nameFeature : nameFeature,
+                    };
+                    _feature = Feature.fromUVL(newFeature, parent, "and");
+                    this.getUVLFeatureChildren(
+                      group,
+                      _feature,
+                      _listImports,
+                      aliasImport
+                    );
+                    this.getUVLConstraints(tree_import);
+                  }   
                 }
-              }                
-              if (_listFeatures !== null) {
-                const feature = _listFeatures.feature();
-                let group = feature.group();    
-                let _feature = null;
-                if (feature.getChild(0).getText() == nameFeature) {
-                  let newFeature = {
-                    disabled: false,
-                    mandatory: false,
-                    name: aliasImport != null ? aliasImport+'.'+nameFeature : nameFeature,
-                  };
-                  _feature = Feature.fromUVL(newFeature, parent, "and");
-                  this.getUVLFeatureChildren(
-                    group,
-                    _feature,
-                    _listImports,
-                    aliasImport
-                  );
-                  this.getUVLConstraints(tree_import);
-                }   
-              }
-          }
+            }
+          });
         }
       });
     }
