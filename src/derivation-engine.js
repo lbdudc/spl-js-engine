@@ -23,7 +23,6 @@ export default class DerivationEngine {
     components
   ) {
     const promises = [];
-
     if (typeof codePath === "object" && codePath.zip) {
       // codePath is in fact an object with all the params
       /**
@@ -87,7 +86,7 @@ export default class DerivationEngine {
       }
       this.input = new LocalInput(codePath);
     }
-
+    
     return Promise.all(promises)
       .then(() => {
         this.templateEngine = new TemplateEngine({}, extraJS);
@@ -338,8 +337,12 @@ export default class DerivationEngine {
 
   setComponents(featureModel, components) {
     let names = UVLFeatureModel.getUVLImports(featureModel,components);
+    let codePath = ''      
     names.forEach((name) => {
-      let codePath = components[name];
+      if (typeof name != "string")
+        codePath = components[name.name];
+      else
+        codePath = components[name];    
       let config = readJsonFromFile(codePath+"/config.json");
       if (Array.isArray(config.delimiters)) {
         config.delimiters.forEach((d) => {

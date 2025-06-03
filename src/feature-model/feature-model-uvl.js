@@ -20,7 +20,7 @@ export default class UVLFeatureModel {
     return aliasChildImport
   }
 
-  static getUVLImports(featureModel) {
+  static getUVLImports(featureModel, components) {
     let paths = [];
     const fm = new FeatureModel(featureModel);
     const tree = fm.getFeatureModel();
@@ -31,12 +31,15 @@ export default class UVLFeatureModel {
           childImport.children.forEach((childImportLine) => {
             let nameChildImport = childImportLine.ns.getText().trim();
             let aliasChildImport = UVLFeatureModel.getAliasImport(childImportLine);
-            let fromChildImport = childImportLine.pp.getText().trim();
+            let fromChildImport = childImportLine.pp?.getText().trim() || "";
             paths.push({
               name: nameChildImport,
               alias: aliasChildImport,
               from: fromChildImport,
             });
+            let codePathImport = components[nameChildImport];
+            childImport = UVLFeatureModel.getUVLImports(codePathImport+"/model.uvl",components);
+            paths = childImport.length > 0 ? paths.concat(childImport) : paths;
           });
         }
       });
