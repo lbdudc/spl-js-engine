@@ -37,9 +37,11 @@ export default class UVLFeatureModel {
               alias: aliasChildImport,
               from: fromChildImport,
             });
-            let codePathImport = components[nameChildImport];
-            childImport = UVLFeatureModel.getUVLImports(codePathImport+"/model.uvl",components);
-            paths = childImport.length > 0 ? paths.concat(childImport) : paths;
+            if (components != null) {
+              let codePathImport = components[nameChildImport];
+              childImport = UVLFeatureModel.getUVLImports(codePathImport+"/model.uvl",components);
+              paths = childImport.length > 0 ? paths.concat(childImport) : paths;
+              }
           });
         }
       });
