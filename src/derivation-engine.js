@@ -11,6 +11,7 @@ import {
 } from "./file-utils.js";
 import _eval from "eval";
 import UVLFeatureModel from "./feature-model/feature-model-uvl.js";
+import path from "path";
 
 export default class DerivationEngine {
   constructor(
@@ -342,8 +343,8 @@ export default class DerivationEngine {
       if (typeof name != "string")
         codePath = components[name.name];
       else
-        codePath = components[name];    
-      let config = readJsonFromFile(codePath+"/config.json");
+        codePath = components[name];  
+      let config = readJsonFromFile(codePath+`${path.sep}config.json`);
       if (Array.isArray(config.delimiters)) {
         config.delimiters.forEach((d) => {
           d.extension.forEach((e) => {
@@ -352,7 +353,8 @@ export default class DerivationEngine {
           });
         });
       }
-      this.input.addCodePath(codePath+"/code", name === Object.keys(components)[0] ? true : false);
+
+      this.input.addCodePath(codePath+`${path.sep}code`, name === Object.keys(components)[0] ? true : false);
     });
   }
 }

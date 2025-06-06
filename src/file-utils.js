@@ -42,7 +42,7 @@ export function copyFile(filePathOrigen, tmpCipPath) {
   let destinationDir = "";
   let index = 0;
 
-  index = filePathOrigen.indexOf("/", index + 1);
+  index = filePathOrigen.indexOf(path.sep, index + 1);
   destinationDir = tmpCipPath + getFolder(filePathOrigen.substring(index + 1));
 
   if (!fs.existsSync(destinationDir)) {
@@ -50,7 +50,7 @@ export function copyFile(filePathOrigen, tmpCipPath) {
   }
   fs.copyFileSync(
     filePathOrigen,
-    destinationDir + "/" + getFileName(filePathOrigen)
+    destinationDir + path.sep + getFileName(filePathOrigen)
   );
 }
 
