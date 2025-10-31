@@ -1,0 +1,9 @@
+imports
+    componentA
+features
+    SimpleSPL
+        optional
+            componentA.SPLcomponentA
+
+constraints
+    featureA => !featureD

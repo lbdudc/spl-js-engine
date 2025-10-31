@@ -1,4 +1,9 @@
-import { DerivationEngine, FeatureModel, readJsonFromFile, readFile } from "../src/index.js";
+import {
+  DerivationEngine,
+  FeatureModel,
+  readJsonFromFile,
+  readFile,
+} from "../src/index.js";
 import {
   getTestPath as p,
   removeTmpFolder,
@@ -30,10 +35,9 @@ test("Create a product with UVL format", async () => {
 });
 
 test("Create a product with two components", async () => {
-  
   const components = {
-    "componentA": p("simpleSPLwithComponents/componentA"),
-    "componentB": p("simpleSPLwithComponents/componentB")
+    componentA: p("simpleSPLwithComponents/componentA"),
+    componentB: p("simpleSPLwithComponents/componentB"),
   };
 
   const engine = await new DerivationEngine({
@@ -54,9 +58,9 @@ test("Create a product with two components", async () => {
 
 test("Create a product with three components", async () => {
   const components = {
-    "componentA": p("simpleSPLwithComponents2/componentA"),
-    "componentB": p("simpleSPLwithComponents2/componentB"),
-    "componentC": p("simpleSPLwithComponents2/componentC")
+    componentA: p("simpleSPLwithComponents2/componentA"),
+    componentB: p("simpleSPLwithComponents2/componentB"),
+    componentC: p("simpleSPLwithComponents2/componentC"),
   };
 
   const engine = await new DerivationEngine({
@@ -77,8 +81,8 @@ test("Create a product with three components", async () => {
 
 test("Create a product with components with imports", async () => {
   const components = {
-    "componentA": p("simpleSPLwithComponentsImport/componentA"),
-    "componentB": p("simpleSPLwithComponentsImport/componentB")
+    componentA: p("simpleSPLwithComponentsImport/componentA"),
+    componentB: p("simpleSPLwithComponentsImport/componentB"),
   };
 
   const engine = await new DerivationEngine({
@@ -97,11 +101,10 @@ test("Create a product with components with imports", async () => {
   );
 });
 
-
 test("Create a product with components with duplicate imports", async () => {
   const components = {
-    "componentA": p("simpleSPLwithComponentsImportDuplicate/componentA"),
-    "componentB": p("simpleSPLwithComponentsImportDuplicate/componentB")
+    componentA: p("simpleSPLwithComponentsImportDuplicate/componentA"),
+    componentB: p("simpleSPLwithComponentsImportDuplicate/componentB"),
   };
 
   const engine = await new DerivationEngine({
@@ -122,8 +125,8 @@ test("Create a product with components with duplicate imports", async () => {
 
 test("Create a product with components with imports and namespace", async () => {
   const components = {
-    "componentA": p("simpleSPLwithComponentsImportNamespace/componentA"),
-    "componentB": p("simpleSPLwithComponentsImportNamespace/componentB")
+    componentA: p("simpleSPLwithComponentsImportNamespace/componentA"),
+    componentB: p("simpleSPLwithComponentsImportNamespace/componentB"),
   };
 
   const engine = await new DerivationEngine({
@@ -144,9 +147,9 @@ test("Create a product with components with imports and namespace", async () => 
 
 test("Create a product with components and different delimiters", async () => {
   const components = {
-    "componentA": p("simpleSPLwithComponentsDelimiter/componentA"),
-    "componentB": p("simpleSPLwithComponentsDelimiter/componentB"),
-    "componentC": p("simpleSPLwithComponentsDelimiter/componentC")
+    componentA: p("simpleSPLwithComponentsDelimiter/componentA"),
+    componentB: p("simpleSPLwithComponentsDelimiter/componentB"),
+    componentC: p("simpleSPLwithComponentsDelimiter/componentC"),
   };
 
   const engine = await new DerivationEngine({
@@ -167,38 +170,33 @@ test("Create a product with components and different delimiters", async () => {
 
 test("testing uvl generation without constraints", () => {
   const fm = new FeatureModel("FMName");
-    fm.and([
-      { name: "f1", mandatory: true },
-      { name: "f2", mandatory: true },
-      { name: "f3" },
-    ]);
+  fm.and([
+    { name: "f1", mandatory: true },
+    { name: "f2", mandatory: true },
+    { name: "f3" },
+  ]);
   const expected = readFile(p("feature-model/model.uvl"));
   assert.deepEqual(fm.toUVL(), expected);
 });
 
 test("testing uvl generation without constraints 2", () => {
   const fm = new FeatureModel("FMName");
-    fm.or([
-      { name: "f1" },
-      { name: "f2" },
-      { name: "f3" },
-    ]);
-  const f3 = fm.get("f3")
-    f3.alt("f5");
-    f3.alt("f6");
+  fm.or([{ name: "f1" }, { name: "f2" }, { name: "f3" }]);
+  const f3 = fm.get("f3");
+  f3.alt("f5");
+  f3.alt("f6");
   const expected = readFile(p("feature-model/model2.uvl"));
   assert.deepEqual(fm.toUVL(), expected);
 });
 
 test("testing uvl generation with constraints", () => {
   const fm = new FeatureModel("FMName");
-    fm.and([
-      { name: "f1"},
-      { name: "f2", mandatory: true },
-      { name: "f3" },
-      { name: "f4", mandatory: true },
-      
-    ]);
+  fm.and([
+    { name: "f1" },
+    { name: "f2", mandatory: true },
+    { name: "f3" },
+    { name: "f4", mandatory: true },
+  ]);
   fm.addConstraint(fm.constraint("f1").and(fm.constraint("f3")));
   const expected = readFile(p("feature-model/model3.uvl"));
   assert.deepEqual(fm.toUVL(), expected);
@@ -206,8 +204,8 @@ test("testing uvl generation with constraints", () => {
 
 test("testing uvl generation with constraints and components", async () => {
   const components = {
-    "componentA": p("simpleSPLwithComponentsImportNamespace/componentA"),
-    "componentB": p("simpleSPLwithComponentsImportNamespace/componentB")
+    componentA: p("simpleSPLwithComponentsImportNamespace/componentA"),
+    componentB: p("simpleSPLwithComponentsImportNamespace/componentB"),
   };
 
   const engine = await new DerivationEngine({
@@ -223,9 +221,9 @@ test("testing uvl generation with constraints and components", async () => {
 
 test("testing uvl generation with constraints and components2", async () => {
   const components = {
-    "componentC": p("simpleSPLwithComponentsImportNamespace/componentC"),
-    "componentD": p("simpleSPLwithComponentsImportNamespace/componentD"),
-    "componentG": p("simpleSPLwithComponentsImportNamespace/componentG")
+    componentC: p("simpleSPLwithComponentsImportNamespace/componentC"),
+    componentD: p("simpleSPLwithComponentsImportNamespace/componentD"),
+    componentG: p("simpleSPLwithComponentsImportNamespace/componentG"),
   };
 
   const engine = await new DerivationEngine({
@@ -237,4 +235,114 @@ test("testing uvl generation with constraints and components2", async () => {
   const expected = readFile(p("feature-model/modelwithconstraint2.uvl"));
 
   assert.deepEqual(fm.toUVL(), expected);
+});
+
+test("testing uvl generation with imply constraint", async () => {
+  const components = {
+    componentA: p("simpleSPLwithSimpleConstraints/componentA"),
+  };
+
+  const engine = await new DerivationEngine({
+    featureModel: p("simpleSPLwithSimpleConstraints/model.uvl"),
+    components: components,
+  });
+
+  const fm = engine.featureModel;
+  const features = fm.features.flatMap((f) =>
+    (function getAllNames(featuresList) {
+      const names = [];
+      for (const feature of featuresList) {
+        names.push(feature.name);
+        if (feature.features && feature.features.length > 0) {
+          names.push(...getAllNames(feature.features));
+        }
+      }
+      return names;
+    })(f.features)
+  );
+
+  const expected = JSON.parse(
+    readFile(p("feature-model/simpleConstraintFeatures.json"))
+  ).features;
+  assert.deepEqual(features, expected);
+});
+
+test("testing uvl generation with imply constraint from different modules", async () => {
+  const components = {
+    componentA: p("simpleSPLwithSimpleConstraints/componentA"),
+    componentB: p("simpleSPLwithSimpleConstraints/componentB"),
+  };
+
+  const engine = await new DerivationEngine({
+    featureModel: p("simpleSPLwithSimpleConstraints/model_2_modules.uvl"),
+    components: components,
+  });
+
+  const fm = engine.featureModel;
+  const features = fm.features.flatMap((f) =>
+    (function getAllNames(featuresList) {
+      const names = [];
+      for (const feature of featuresList) {
+        names.push(feature.name);
+        if (feature.features && feature.features.length > 0) {
+          names.push(...getAllNames(feature.features));
+        }
+      }
+      return names;
+    })(f.features)
+  );
+
+  const expected = JSON.parse(
+    readFile(p("feature-model/simpleConstraintFeatures2Modules.json"))
+  ).features;
+  assert.deepEqual(features, expected);
+});
+
+test("testing uvl generation with negation constraints", async () => {
+  const components = {
+    componentA: p("simpleSPLwithNegationConstraints/componentA"),
+  };
+
+  const engine = await new DerivationEngine({
+    featureModel: p("simpleSPLwithNegationConstraints/model.uvl"),
+    components: components,
+  });
+
+  await assert.rejects(
+    async () => {
+      await engine.generateProduct(
+        p("tmp/simpleProduct"),
+        readJsonFromFile(p("simpleSPLwithNegationConstraints/product.json"))
+      );
+    },
+    {
+      message: /Constraints \(featureA => !featureD\) not met/,
+    }
+  );
+});
+
+test("testing uvl generation with negation constraints using two components", async () => {
+  const components = {
+    componentA: p("simpleSPLwithNegationConstraints/componentA"),
+    componentB: p("simpleSPLwithNegationConstraints/componentB"),
+  };
+
+  const engine = await new DerivationEngine({
+    featureModel: p("simpleSPLwithNegationConstraints/model_2_modules.uvl"),
+    components: components,
+  });
+
+  await assert.rejects(
+    async () => {
+      await engine.generateProduct(
+        p("tmp/simpleProduct"),
+        readJsonFromFile(
+          p("simpleSPLwithNegationConstraints/product_2_modules.json")
+        )
+      );
+    },
+    {
+      message: /Constraints \(featureA => !featureC\) not met/,
+    }
+  );
 });

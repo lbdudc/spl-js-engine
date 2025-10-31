@@ -15,9 +15,9 @@ export default class UVLFeatureModel {
   static getAliasImport(childImport) {
     let aliasChildImport = null;
     if (childImport.alias !== null) {
-      aliasChildImport = childImport.alias.getText().trim()
+      aliasChildImport = childImport.alias.getText().trim();
     }
-    return aliasChildImport
+    return aliasChildImport;
   }
 
   static getUVLImports(featureModel, components) {
@@ -30,7 +30,8 @@ export default class UVLFeatureModel {
         if (childImport instanceof UVLJavaScriptParser.ImportLineContext) {
           childImport.children.forEach((childImportLine) => {
             let nameChildImport = childImportLine.ns.getText().trim();
-            let aliasChildImport = UVLFeatureModel.getAliasImport(childImportLine);
+            let aliasChildImport =
+              UVLFeatureModel.getAliasImport(childImportLine);
             let fromChildImport = childImportLine.pp?.getText().trim() || "";
             paths.push({
               name: nameChildImport,
@@ -39,9 +40,13 @@ export default class UVLFeatureModel {
             });
             if (components != null) {
               let codePathImport = components[nameChildImport];
-              childImport = UVLFeatureModel.getUVLImports(codePathImport+"/model.uvl",components);
-              paths = childImport.length > 0 ? paths.concat(childImport) : paths;
-              }
+              childImport = UVLFeatureModel.getUVLImports(
+                codePathImport + "/model.uvl",
+                components
+              );
+              paths =
+                childImport.length > 0 ? paths.concat(childImport) : paths;
+            }
           });
         }
       });
@@ -64,12 +69,7 @@ export default class UVLFeatureModel {
     if (listFeatures !== null) {
       const feature = listFeatures.feature();
       this.fm = new FeatureModelSPL(feature.getChild(0).getText());
-      this.getUVLFeatureChildren(
-        feature.group(),
-        this.fm,
-        listImports,
-        null
-      );
+      this.getUVLFeatureChildren(feature.group(), this.fm, listImports, null);
     }
   }
 
@@ -126,10 +126,18 @@ export default class UVLFeatureModel {
                 let newFeature = {
                   disabled: false,
                   mandatory: typeChild == "mandatory" ? true : false,
-                  name: aliasImport != null ? aliasImport + '.' + referenceContext.getText() : referenceContext.getText(),
+                  name:
+                    aliasImport != null
+                      ? aliasImport + "." + referenceContext.getText()
+                      : referenceContext.getText(),
                 };
                 const _feature = Feature.fromUVL(newFeature, parent, typeFinal);
-                this.getUVLFeatureChildren(_group, _feature, listImports, aliasImport);
+                this.getUVLFeatureChildren(
+                  _group,
+                  _feature,
+                  listImports,
+                  aliasImport
+                );
               } else {
                 let nameImport = referenceContext.getChild(0).getText().trim();
                 let nameFeature = referenceContext.getChild(2).getText().trim();
@@ -148,7 +156,8 @@ export default class UVLFeatureModel {
         if (childImport instanceof UVLJavaScriptParser.ImportLineContext) {
           childImport.children.forEach((childImportLine) => {
             let nameChildImport = childImportLine.ns.getText().trim();
-            let aliasChildImport = UVLFeatureModel.getAliasImport(childImportLine);
+            let aliasChildImport =
+              UVLFeatureModel.getAliasImport(childImportLine);
             let codePathImport = this.components[nameChildImport];
             if (codePathImport == null) {
               return;
@@ -156,29 +165,39 @@ export default class UVLFeatureModel {
             const fm_ = new FeatureModel(codePathImport + "/model.uvl");
             const tree_import = fm_.getFeatureModel();
             let namespaceImport = this.getNamespace(tree_import);
-            let aliasImport = aliasChildImport != null ? aliasChildImport : namespaceImport != null ? namespaceImport : null;
-            if (
-              nameChildImport == nameImport || aliasImport == nameImport
-            ) {
-              if (this.imports.some(importObj =>
-                importObj.import === nameImport ||
-                importObj.alias === nameImport
-              )) {
+            let aliasImport =
+              aliasChildImport != null
+                ? aliasChildImport
+                : namespaceImport != null
+                ? namespaceImport
+                : null;
+            if (nameChildImport == nameImport || aliasImport == nameImport) {
+              if (
+                this.imports.some(
+                  (importObj) =>
+                    importObj.import === nameImport ||
+                    importObj.alias === nameImport
+                )
+              ) {
                 return;
               } else {
-                this.imports.push({ import: nameChildImport, alias: aliasImport });
+                this.imports.push({
+                  import: nameChildImport,
+                  alias: aliasImport,
+                });
               }
               const _listFeatures = tree_import.features();
               const _listImports = tree_import.imports();
               if (_listImports !== null) {
                 try {
-                  let comp = readJsonFromFile(codePathImport + "/components.json")
+                  let comp = readJsonFromFile(
+                    codePathImport + "/components.json"
+                  );
                   if (comp) {
                     Object.assign(this.components, comp);
                   }
-                }
-                catch (error) {
-                  throw ("Error reading the JSON file 'components.json':");
+                } catch (error) {
+                  throw "Error reading the JSON file 'components.json':";
                 }
               }
               if (_listFeatures !== null) {
@@ -189,7 +208,10 @@ export default class UVLFeatureModel {
                   let newFeature = {
                     disabled: false,
                     mandatory: false,
-                    name: aliasImport != null ? aliasImport + '.' + nameFeature : nameFeature,
+                    name:
+                      aliasImport != null
+                        ? aliasImport + "." + nameFeature
+                        : nameFeature,
                   };
                   _feature = Feature.fromUVL(newFeature, parent, "and");
                   this.getUVLFeatureChildren(
@@ -240,33 +262,45 @@ export default class UVLFeatureModel {
   processDetailConstraints(constraint) {
     let textParts = constraint.getText().split(".");
     if (textParts.length > 1) {
-      textParts = this.imports.some(importObj => importObj.import === textParts[textParts.length - 2])
+      textParts = this.imports.some(
+        (importObj) => importObj.import === textParts[textParts.length - 2]
+      )
         ? textParts[textParts.length - 1]
         : textParts.slice(-2).join(".");
     } else {
       textParts = textParts[textParts.length - 1];
     }
-    return textParts
+    return textParts;
   }
 
-  getUVLDetailConstraints(contraintContext) {
-    const type = this.getConstraintType(contraintContext);
-    let newContraint = {
+  getUVLDetailConstraints(constraintContext) {
+    const type = this.getConstraintType(constraintContext);
+    let newConstraint = {
       children: [],
       name: type,
     };
     let child = null;
-    let text = null;
     const values = [0, 2];
+
     values.forEach((value) => {
-      if (contraintContext.getChild(value) instanceof UVLJavaScriptParser.LiteralConstraintContext) {
-        child = { name: "var", val: this.processDetailConstraints(contraintContext.getChild(value)) };
+      const subCtx = constraintContext.getChild(value);
+      if (subCtx instanceof UVLJavaScriptParser.LiteralConstraintContext) {
+        child = {
+          name: "var",
+          val: this.processDetailConstraints(subCtx),
+        };
+      } else if (subCtx instanceof UVLJavaScriptParser.NotConstraintContext) {
+        const inner = this.processDetailConstraints(subCtx);
+        child = {
+          name: "not",
+          children: [{ name: "var", val: inner.slice(1) }],
+        };
       } else {
-        child = this.getUVLDetailConstraints(contraintContext.getChild(value));
+        child = this.getUVLDetailConstraints(subCtx);
       }
-      newContraint.children.push(child);
+      newConstraint.children.push(child);
     });
-    return newContraint;
+    return newConstraint;
   }
 
   getUVLConstraints(tree) {
@@ -289,18 +323,28 @@ export default class UVLFeatureModel {
 
   static toUVL(featureModel) {
     let uvlModel = null;
-    uvlModel = (UVLFeatureModel.readFeatures(featureModel, "features", 0) + UVLFeatureModel.readConstraints(featureModel));
+    uvlModel =
+      UVLFeatureModel.readFeatures(featureModel, "features", 0) +
+      UVLFeatureModel.readConstraints(featureModel);
     return uvlModel;
   }
 
   static readFeatures(feature, result, tabCount) {
     tabCount += 1;
-    result += "\n" + "\t".repeat(tabCount) + feature.name.trim() + this.readAttributes(feature);
+    result +=
+      "\n" +
+      "\t".repeat(tabCount) +
+      feature.name.trim() +
+      this.readAttributes(feature);
     tabCount += 1;
     let mandatory = false;
     let relationName = null;
     feature.features.forEach((featureNode, index) => {
-      if ((featureNode.mandatory & !mandatory) || (!featureNode.mandatory & mandatory) || index === 0) {
+      if (
+        featureNode.mandatory & !mandatory ||
+        !featureNode.mandatory & mandatory ||
+        index === 0
+      ) {
         relationName = this.serializeType(feature.type, featureNode.mandatory);
         if (relationName !== "") {
           result += "\n" + "\t".repeat(tabCount) + relationName;
@@ -352,10 +396,10 @@ export default class UVLFeatureModel {
   }
 
   static serializeConstraint(ctc) {
-    return ctc.toString()
+    return ctc
+      .toString()
       .replace(/\bOR\b/g, "|")
       .replace(/\bAND\b/g, "&")
       .replace(/\bNOT\b/g, "!");
   }
-
 }

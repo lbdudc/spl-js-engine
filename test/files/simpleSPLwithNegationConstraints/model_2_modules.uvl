@@ -1,0 +1,11 @@
+imports
+    componentA
+    componentB
+features
+    SimpleSPL
+        optional
+            componentA.SPLcomponentA
+            componentB.SPLcomponentB
+
+constraints
+    featureA => !featureC
