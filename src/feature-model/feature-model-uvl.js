@@ -1,7 +1,6 @@
 import { UVLJavaScriptParser, FeatureModel } from "uvl-parser";
 import FeatureModelSPL from "./feature-model.js";
 import Feature from "./feature.js";
-import { readJsonFromFile, readFile } from "../file-utils.js";
 import TYPE from "./feature-type.js";
 
 export default class UVLFeatureModel {
@@ -21,18 +20,13 @@ export default class UVLFeatureModel {
   }
 
   getUVLFeature(tree) {
-    const namespace = this.getNamespace(tree);
+    this.getNamespace(tree);
     const listFeatures = tree.features();
     const listImports = tree.imports();
     if (listFeatures !== null) {
       const feature = listFeatures.feature();
       this.fm = new FeatureModelSPL(feature.getChild(0).getText());
-      this.getUVLFeatureChildren(
-        feature.group(),   
-        this.fm,
-        listImports,
-        null
-      );
+      this.getUVLFeatureChildren(feature.group(), this.fm, listImports, null);
     }
   }
 
@@ -40,12 +34,12 @@ export default class UVLFeatureModel {
     const namespace = tree.namespace();
     let name = null;
     if (namespace instanceof UVLJavaScriptParser.NamespaceContext) {
-        namespace.children.forEach((child) => {
-          if (child instanceof UVLJavaScriptParser.ReferenceContext) {
-              name = child.getText();
-              return true;
-          }
-        });
+      namespace.children.forEach((child) => {
+        if (child instanceof UVLJavaScriptParser.ReferenceContext) {
+          name = child.getText();
+          return true;
+        }
+      });
     }
     return name;
   }
@@ -89,11 +83,19 @@ export default class UVLFeatureModel {
                 let newFeature = {
                   disabled: false,
                   mandatory: typeChild == "mandatory" ? true : false,
-                  name: aliasImport != null ? aliasImport+'.'+referenceContext.getText() : referenceContext.getText(),
+                  name:
+                    aliasImport != null
+                      ? aliasImport + "." + referenceContext.getText()
+                      : referenceContext.getText(),
                 };
                 const _feature = Feature.fromUVL(newFeature, parent, typeFinal);
-                this.getUVLFeatureChildren(_group, _feature,listImports,aliasImport);
-              } 
+                this.getUVLFeatureChildren(
+                  _group,
+                  _feature,
+                  listImports,
+                  aliasImport
+                );
+              }
             }
           });
         }
@@ -133,46 +135,58 @@ export default class UVLFeatureModel {
   processDetailConstraints(constraint) {
     let textParts = constraint.getText().split(".");
     if (textParts.length > 1) {
-      textParts = this.imports.some(importObj => importObj.import === textParts[textParts.length - 2])
+      textParts = this.imports.some(
+        (importObj) => importObj.import === textParts[textParts.length - 2]
+      )
         ? textParts[textParts.length - 1]
         : textParts.slice(-2).join(".");
     } else {
-        textParts = textParts[textParts.length - 1];  
+      textParts = textParts[textParts.length - 1];
     }
-    return textParts
+    return textParts;
   }
 
-  getUVLDetailConstraints(contraintContext) {
-    const type = this.getConstraintType(contraintContext);
-    let newContraint = {
-        children: [],
-        name: type,
+  getUVLDetailConstraints(constraintContext) {
+    if (constraintContext.getChild(0).getText() === "(") {
+      return this.getUVLDetailConstraints(constraintContext.getChild(1));
+    }
+
+    const type = this.getConstraintType(constraintContext);
+    let newConstraint = {
+      children: [],
+      name: type,
     };
     let child = null;
-    let text = null;
     const values = [0, 2];
     values.forEach((value) => {
-      if (contraintContext.getChild(value) instanceof UVLJavaScriptParser.LiteralConstraintContext) {      
-        child = { name: "var", val: this.processDetailConstraints(contraintContext.getChild(value)) };      
+      if (
+        constraintContext.getChild(value) instanceof
+        UVLJavaScriptParser.LiteralConstraintContext
+      ) {
+        child = {
+          name: "var",
+          val: this.processDetailConstraints(constraintContext.getChild(value)),
+        };
       } else {
-        child = this.getUVLDetailConstraints(contraintContext.getChild(value));
+        child = this.getUVLDetailConstraints(constraintContext.getChild(value));
       }
-      newContraint.children.push(child);
+      newConstraint.children.push(child);
     });
-    return newContraint;    
+    return newConstraint;
   }
 
   getUVLConstraints(tree) {
-    const listContrains = tree.constraints();
-    if (listContrains !== null) {
-      listContrains.children.forEach((contraint) => {
-        if (contraint instanceof UVLJavaScriptParser.ConstraintLineContext) {
-          contraint.children.forEach((contraintContext) => {
+    const listConstraints = tree.constraints();
+    if (listConstraints !== null) {
+      listConstraints.children.forEach((constraint) => {
+        if (constraint instanceof UVLJavaScriptParser.ConstraintLineContext) {
+          constraint.children.forEach((constraintContext) => {
             if (
-              contraintContext instanceof UVLJavaScriptParser.ConstraintContext
+              constraintContext instanceof UVLJavaScriptParser.ConstraintContext
             ) {
-              let newContraint = this.getUVLDetailConstraints(contraintContext);
-              this.fm.constraintSet.fromUVL(newContraint);
+              let newConstraint =
+                this.getUVLDetailConstraints(constraintContext);
+              this.fm.constraintSet.fromUVL(newConstraint);
             }
           });
         }
@@ -180,27 +194,37 @@ export default class UVLFeatureModel {
     }
   }
 
-  static toUVL(featureModel){
+  static toUVL(featureModel) {
     let uvlModel = null;
-    uvlModel = (UVLFeatureModel.readFeatures(featureModel, "features", 0) + UVLFeatureModel.readConstraints(featureModel));
+    uvlModel =
+      UVLFeatureModel.readFeatures(featureModel, "features", 0) +
+      UVLFeatureModel.readConstraints(featureModel);
     return uvlModel;
   }
 
   static readFeatures(feature, result, tabCount) {
     tabCount += 1;
-    result += "\n" + "\t".repeat(tabCount) + feature.name.trim() + this.readAttributes(feature);
-    tabCount += 1;    
+    result +=
+      "\n" +
+      "\t".repeat(tabCount) +
+      feature.name.trim() +
+      this.readAttributes(feature);
+    tabCount += 1;
     let mandatory = false;
     let relationName = null;
-    feature.features.forEach((featureNode,index) => {
-        if ((featureNode.mandatory & !mandatory) || (!featureNode.mandatory & mandatory) || index===0) {
-          relationName = this.serializeType(feature.type, featureNode.mandatory);   
-          if (relationName !== "") {
-            result += "\n" + "\t".repeat(tabCount) + relationName;
-          }       
-        } 
-        mandatory = featureNode.mandatory;
-        result = this.readFeatures(featureNode, result, tabCount);
+    feature.features.forEach((featureNode, index) => {
+      if (
+        featureNode.mandatory & !mandatory ||
+        !featureNode.mandatory & mandatory ||
+        index === 0
+      ) {
+        relationName = this.serializeType(feature.type, featureNode.mandatory);
+        if (relationName !== "") {
+          result += "\n" + "\t".repeat(tabCount) + relationName;
+        }
+      }
+      mandatory = featureNode.mandatory;
+      result = this.readFeatures(featureNode, result, tabCount);
     });
     return result;
   }
@@ -211,14 +235,14 @@ export default class UVLFeatureModel {
       attributes.push("abstract");
     } else if (feature.hidden) {
       attributes.push("hidden");
-    }    
+    }
     return attributes.length > 0 ? ` {${attributes.join(", ")}}` : "";
   }
 
-  static serializeType(type,mandatory) {
+  static serializeType(type, mandatory) {
     let result = "";
     if (mandatory) {
-      result = "mandatory"; 
+      result = "mandatory";
     } else if (type == TYPE.ALT) {
       result = "alternative";
     } else if (type == TYPE.AND) {
@@ -227,7 +251,7 @@ export default class UVLFeatureModel {
       result = "or";
     } else if (type == TYPE.FEATURE) {
       result = "";
-    } 
+    }
     return result;
   }
 
@@ -245,10 +269,10 @@ export default class UVLFeatureModel {
   }
 
   static serializeConstraint(ctc) {
-     return ctc.toString()
+    return ctc
+      .toString()
       .replace(/\bOR\b/g, "|")
       .replace(/\bAND\b/g, "&")
       .replace(/\bNOT\b/g, "!");
-  }  
-
+  }
 }
