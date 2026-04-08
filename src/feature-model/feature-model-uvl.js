@@ -157,8 +157,8 @@ export default class UVLFeatureModel {
       name: type,
     };
     let child = null;
-    const values = [0, 2];
-    values.forEach((value) => {
+    const indices = type === "not" ? [1] : [0, 2];
+    indices.forEach((value) => {
       if (
         constraintContext.getChild(value) instanceof
         UVLJavaScriptParser.LiteralConstraintContext
