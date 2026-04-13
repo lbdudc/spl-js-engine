@@ -269,10 +269,16 @@ export default class UVLFeatureModel {
   }
 
   static serializeConstraint(ctc) {
-    return ctc
+    let result = ctc
       .toString()
       .replace(/\bOR\b/g, "|")
       .replace(/\bAND\b/g, "&")
       .replace(/\bNOT\b/g, "!");
+    result = result
+      .replace(/^\(\s*/, "")
+      .replace(/\s*\)$/, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    return result;
   }
 }

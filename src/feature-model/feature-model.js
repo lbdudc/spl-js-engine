@@ -169,7 +169,7 @@ export default class FeatureModel extends Feature {
   }
 
   toXml() {
-    const xmlWriter = new XMLWriter();
+    const xmlWriter = new XMLWriter(true);
     let feature;
     let struct;
     let constraints;
