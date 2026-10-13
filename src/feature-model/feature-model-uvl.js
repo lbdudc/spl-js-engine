@@ -274,33 +274,33 @@ export default class UVLFeatureModel {
   }
 
   getUVLDetailConstraints(constraintContext) {
+    // `(a & b)`: what is between the parentheses, as it is
+    if (
+      constraintContext instanceof
+      UVLJavaScriptParser.ParenthesisConstraintContext
+    ) {
+      return this.getUVLDetailConstraints(constraintContext.getChild(1));
+    }
+    if (
+      constraintContext instanceof UVLJavaScriptParser.LiteralConstraintContext
+    ) {
+      return {
+        name: "var",
+        val: this.processDetailConstraints(constraintContext),
+      };
+    }
     const type = this.getConstraintType(constraintContext);
-    let newConstraint = {
-      children: [],
+    // `!a` has its operand after the operator; the binary ones have one on each side of it
+    const operands =
+      constraintContext instanceof UVLJavaScriptParser.NotConstraintContext
+        ? [1]
+        : [0, 2];
+    return {
       name: type,
+      children: operands.map((index) =>
+        this.getUVLDetailConstraints(constraintContext.getChild(index))
+      ),
     };
-    let child = null;
-    const values = [0, 2];
-
-    values.forEach((value) => {
-      const subCtx = constraintContext.getChild(value);
-      if (subCtx instanceof UVLJavaScriptParser.LiteralConstraintContext) {
-        child = {
-          name: "var",
-          val: this.processDetailConstraints(subCtx),
-        };
-      } else if (subCtx instanceof UVLJavaScriptParser.NotConstraintContext) {
-        const inner = this.processDetailConstraints(subCtx);
-        child = {
-          name: "not",
-          children: [{ name: "var", val: inner.slice(1) }],
-        };
-      } else {
-        child = this.getUVLDetailConstraints(subCtx);
-      }
-      newConstraint.children.push(child);
-    });
-    return newConstraint;
   }
 
   getUVLConstraints(tree) {

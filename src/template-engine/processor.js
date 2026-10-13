@@ -1,4 +1,5 @@
 import Engine from "./engine.js";
+import { spliceCip } from "./cip.js";
 
 export default class Processor extends Engine {
   constructor(features = {}, data = {}, delimiters = {}, extraJS = "") {
@@ -60,55 +61,8 @@ export default class Processor extends Engine {
   }
 
   process_cpi(str, ext, context, contentCipList) {
-    let code = "";
-    let cursor = 0;
-    let cursorCip = 0;
-    let lengthMatch = 0;
-    let match;
-    let match2;
-    const delimiter = this.getDelimiter(ext).regular;
-    const delimiterCip = this.getDelimiter(ext).regular;
-    const del = this.getDelimiter(ext);
-    let codeInsertion;
-
-    while ((match = delimiter.exec(str)) !== null) {
-      code += str.slice(cursor, match.index) + "\n";
-      codeInsertion = match[0]
-        .substring(
-          match[0].indexOf(del.start) + del.start.length,
-          match[0].indexOf(del.end)
-        )
-        .trim();
-      contentCipList.forEach((contentCip) => {
-        delimiterCip.lastIndex = 0;
-        let isFirstMatch = true;
-        while ((match2 = delimiterCip.exec(contentCip)) !== null) {
-          if (
-            match2[0]
-              .substring(
-                match2[0].indexOf(del.start) + del.start.length,
-                match2[0].indexOf(del.end)
-              )
-              .trim() == codeInsertion
-          ) {
-            if (isFirstMatch) {
-              isFirstMatch = false;
-              cursorCip = match2.index;
-              lengthMatch = match2[0].length;
-              continue;
-            }
-            code +=
-              contentCip.slice(cursorCip + lengthMatch, match2.index) + "\n";
-          } else {
-            isFirstMatch = true;
-          }
-        }
-      });
-      cursor = match.index + match[0].length;
-      delimiter.lastIndex = cursor;
-    }
-    code += str.substr(cursor, str.length);
-    return code;
+    const { start, end } = this.getDelimiter(ext);
+    return spliceCip({ main: str, fragments: contentCipList, start, end });
   }
 }
 

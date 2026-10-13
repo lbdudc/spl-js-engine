@@ -896,3 +896,15 @@ function _createMyCalculatorFMAndConstraints() {
 
   return fm;
 }
+
+test("UVL constraints with negation and parentheses", () => {
+  const model = FeatureModel.fromUVL(
+    "features\n\tR\n\t\toptional\n\t\t\tA\n\t\t\tB\n\t\t\tC\n" +
+      "constraints\n\tA => !B\n\t(A & C) => B\n\t!(A | B)\n"
+  );
+  assert.deepStrictEqual(model.constraintSet.constraints.map(String), [
+    "(A => !B)",
+    "((A AND C) => B)",
+    "!(A OR B)",
+  ]);
+});
